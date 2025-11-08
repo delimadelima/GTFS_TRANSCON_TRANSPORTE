@@ -1,0 +1,2 @@
+agency_id,agency_name,agency_url,agency_timezone,agency_lang,agency_phone,agency_fare_url
+2498,TransCon,http://www.contagem.mg.gov.br/?og=119188&op=apresentacao,America/Sao_Paulo,pt-BR,+55 31 3329 3300,

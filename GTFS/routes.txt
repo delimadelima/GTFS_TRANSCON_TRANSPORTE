@@ -1,0 +1,42 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+112883,2498,001A,Circular Contagem,,3,,4eae33,FFFFFF
+112884,2498,001B,Circular Contagem,,3,,4eae33,FFFFFF
+112885,2498,001C,Parque Renascer / Cidade Industrial,,3,,4eae33,FFFFFF
+112886,2498,002A,Circular Industrial,,3,,4eae33,FFFFFF
+112887,2498,002B,Circular Industrial,,3,,4eae33,FFFFFF
+112888,2498,003A,Circular Rio Comprido,,3,,4eae33,FFFFFF
+112890,2498,173,Maracanã / Água Branca / Vila São Paulo,,3,,4eae33,FFFFFF
+112891,2498,101A,Nacional / Cidade Industrial / Eldorado,,3,,4eae33,FFFFFF
+112892,2498,101B,Xangri-lá / Eldorado,,3,,4eae33,FFFFFF
+112893,2498,101C,Nacional / Centro,,3,,4eae33,FFFFFF
+112894,2498,101D,Vale das Amendoeiras / Cidade Industrial,,3,,4eae33,FFFFFF
+112895,2498,102,Jardim Riacho / Maracanã via Metrô,,3,,4eae33,FFFFFF
+112896,2498,103,Parque São João / Amazonas,,3,,4eae33,FFFFFF
+112897,2498,0402,Novo Progresso / Centro / Cidade Industrial,,3,,4eae33,FFFFFF
+112898,2498,0403,Novo Progresso / Cidade Industrial / Centro,,3,,4eae33,FFFFFF
+112899,2498,103R,Parque São João / Metrô,,3,,4eae33,FFFFFF
+112900,2498,301A,Tropical / Metrô,,3,,4eae33,FFFFFF
+112901,2498,301C,Solar do Madeira / Metrô / Cidade Industrial,,3,,4eae33,FFFFFF
+112902,2498,301E,Europa / Metrô,,3,,4eae33,000000
+112903,2498,302A,Renascer / Cidade Industrial / Metrô,,3,,4eae33,FFFFFF
+112904,2498,302B,Icaivera / Metrô,,3,,4eae33,FFFFFF
+112905,2498,302C,Estaleiro / Estação Eldorado,,3,,4eae33,FFFFFF
+112906,2498,302D,Tupã / Estação Eldorado,,3,,4eae33,FFFFFF
+112907,2498,302E,Darcy Ribeiro / Cidade Industrial via Metrô,,3,,4eae33,FFFFFF
+112908,2498,303,Colonial / Cidade Industrial,,3,,4eae33,FFFFFF
+112909,2498,305A,Tropical Via Eldorado / Metrô,,3,,4eae33,FFFFFF
+112910,2498,305B,Tropical / Metrô via Carrefour,,3,,4eae33,FFFFFF
+112911,2498,305D,Estâncias Imperiais / Estação Eldorado,,3,,4eae33,FFFFFF
+112913,2498,306C,Perobas / Três Barras / Cidade Industrial,,3,,4eae33,FFFFFF
+112914,2498,307A,Sapucaias / Cidade Industrial,,3,,4eae33,FFFFFF
+112915,2498,307B,Sapucaias / Metrô Via São Luiz,,3,,4eae33,FFFFFF
+112916,2498,401A,Tijuca / São Joaquim / Cidade Industrial,,3,,4eae33,FFFFFF
+112917,2498,474,Chácaras Santa Terezinha / Cidade Industrial via Metrô,,3,,4eae33,FFFFFF
+112919,2498,402A,Jardim Riacho / Cidade Industrial / Eldorado,,3,,4eae33,FFFFFF
+112920,2498,402B,Jardim Riacho / Eldorado / Cidade Industrial,,3,,4eae33,FFFFFF
+112921,2498,350,Nova Contagem / Ceasa,,3,,4eae33,FFFFFF
+112922,2498,370,Nova Contagem / Cidade Industrial,,3,,4eae33,FFFFFF
+112923,2498,371,Ipê Amarelo / Cidade Industrial,,3,,4eae33,FFFFFF
+112924,2498,174,Chácaras Del Rey / Metrô / Cidade Industrial,,3,,4eae33,FFFFFF
+112925,2498,810,Jardim Industrial / Maracanã,,3,,4eae33,FFFFFF
+112926,2498,570,Cabral / Cidade Industrial via Metrô,,3,,4eae33,FFFFFF

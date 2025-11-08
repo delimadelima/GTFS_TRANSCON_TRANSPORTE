@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SIM – Sistema Integrado de Mobilidade de Contagem | Início</title>
+
+  <style>
+    /* VARS DO ROOT COPIADAS DO INDEX.HTML */
+    :root{
+      --accent:#005029;
+      --accent-2:#e0ff41;
+      --accent-3:#058933;
+      --muted:#6b7280;
+      --bg:#f4f7fb;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:#0f172a;}
+    
+    /* ESTILOS ESPECÍFICOS DO LANDING PAGE */
+    body{ padding-top: 0; display:flex; flex-direction:column; min-height:100vh; align-items:center; justify-content:center; }
+    .landing-content { text-align:center; padding: 40px; background:white; border-radius:12px; box-shadow:0 12px 40px rgba(2,6,23,0.1); max-width: 500px; width: 90%; }
+    .landing-menu { margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+    .landing-menu button, .landing-menu a { 
+        padding: 12px 24px; border-radius: 10px; font-size: 16px; font-weight: 600; text-decoration: none; 
+        cursor: pointer; transition: all 0.15s ease;
+    }
+    .landing-menu a.public-btn { 
+        background: var(--accent); color: white; border: none; 
+    }
+    .landing-menu a.public-btn:hover { background: var(--accent-3); }
+
+    .landing-menu button.internal-btn { 
+        background: transparent; color: var(--accent); border: 2px solid var(--accent); 
+    }
+    .landing-menu button.internal-btn:hover { background: rgba(0, 80, 41, 0.05); }
+
+    /* AUTH MODAL COPIADO DO INDEX.HTML */
+    .auth-modal-backdrop{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; z-index:2200 }
+    .auth-modal{ width:360px; background:#fff; padding:18px; border-radius:12px; box-shadow:0 12px 40px rgba(2,6,23,0.28) }
+    .auth-modal h3{ margin:0 0 8px; font-size:18px; color:var(--accent) }
+    .auth-modal .small{ font-size:13px; color:var(--muted); margin-bottom:10px }
+    .auth-modal input{ width:100%; padding:10px; margin-bottom:8px; border-radius:8px; border:1px solid #eef3fb }
+    .auth-modal .actions{ display:flex; gap:8px; justify-content:space-between; margin-top:8px }
+    .auth-modal .btn-cancel{ background:transparent; border:1px solid #e6eef6; color:var(--muted) }
+    .auth-modal .btn-ok{ background:var(--accent); color:#fff; border: none; }
+    
+    @media (max-width: 550px) {
+        .landing-menu { flex-direction: column; }
+        .landing-menu button, .landing-menu a { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="landing-content">
+    <img src="ASSETS/Incon Logo.png" alt="Icon Logo" style="height:100px; margin-bottom: 10px;">
+    <a href="#" class="logo-sim-link" title="SIM" style="cursor:default; text-decoration: none; display: block;">
+      <img src="ASSETS/Incon_Sim_1.png" alt="SIM Logo" style="height:80px; max-height:80px;">
+      <div style="font-size:18px; font-weight:700; color:var(--accent); text-align:center; margin-top:4px;">Sistema Integrado de Mobilidade de Contagem</div>
+    </a>
+
+    <div class="landing-menu">
+      <a href="mapa.html" class="public-btn">Visão Pública (Mapa)</a>
+      <button id="accessInternalBtn" class="internal-btn">Acesso Interno</button>
+    </div>
+  </div>
+
+  <div id="authBackdrop" class="auth-modal-backdrop" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-modal="true">
+      <h3>Acesso Interno</h3>
+      <div class="small">Informe usuário e senha para acessar GEOP e Ferramentas.</div>
+      <input id="authUser" placeholder="Usuário" autocomplete="username" />
+      <input id="authPass" placeholder="Senha" type="password" autocomplete="current-password" />
+      <div id="authMsg" class="small" style="color:#ff5c5c; display:none"></div>
+      <div class="actions">
+        <button id="authCancel" class="btn-cancel">Cancelar</button>
+        <button id="authOk" class="btn-ok">Entrar</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Inicialização do usuário padrão (carloslima: delima14delima)
+    (function(){
+      try {
+        const users = JSON.parse(localStorage.getItem('sim_users')||'{}');
+        if(!users['carloslima']){
+          users['carloslima'] = { password: 'delima14delima', role:'admin', name:'Carlos Lima' };
+          localStorage.setItem('sim_users', JSON.stringify(users));
+        }
+      } catch(e){ console.warn('init user error', e); }
+    })();
+
+    // Helpers
+    const $ = id => document.getElementById(id);
+    function show(el){ if(el) el.style.display=''; }
+    function hide(el){ if(el) el.style.display='none'; }
+    
+    // Auth elements
+    const authBackdrop = $('authBackdrop'), authUser = $('authUser'), authPass = $('authPass'), authOk = $('authOk'), authCancel = $('authCancel');
+
+    function showAuthMessage(msg){ const el=$('authMsg'); if(msg){ el.style.display='block'; el.textContent = msg; } else { el.style.display='none'; el.textContent=''; } }
+
+    function openAuthModal(){
+      showAuthMessage('');
+      authUser.value=''; authPass.value='';
+      authBackdrop.style.display='flex'; authBackdrop.setAttribute('aria-hidden','false');
+      setTimeout(()=>authUser.focus(),50);
+    }
+    function closeAuthModal(){ authBackdrop.style.display='none'; authBackdrop.setAttribute('aria-hidden','true'); }
+    
+    function setSession(role, username){
+        sessionStorage.setItem('sim_role', role);
+        sessionStorage.setItem('sim_user', username||'');
+    }
+    function clearSession(){
+        sessionStorage.removeItem('sim_role'); sessionStorage.removeItem('sim_user');
+    }
+
+    // Lógica de autenticação e redirecionamento
+    authOk.addEventListener('click', function(){
+      // Normaliza o username: trim, lowercase, remove espaços e pontos
+      const u = authUser.value.trim().toLowerCase().replace(/\s/g, '').replace(/\./g, ''); 
+      const p = authPass.value;
+      if(!u || !p){ showAuthMessage('Informe usuário e senha.'); return; }
+      try {
+        const users = JSON.parse(localStorage.getItem('sim_users') || '{}');
+        const uu = users[u];
+        if(uu && uu.password === p){
+          const role = uu.role === 'admin' ? 'admin' : 'staff';
+          setSession(role, u);
+          closeAuthModal();
+          // REDIRECIONA PARA A PÁGINA DO MAPA APÓS O LOGIN BEM-SUCEDIDO
+          window.location.href = 'mapa.html'; 
+          return;
+        } else { showAuthMessage('Usuário ou senha inválidos.'); }
+      } catch(e){ console.error('auth error', e); showAuthMessage('Erro ao validar usuário.'); }
+    });
+    authCancel.addEventListener('click', ()=>closeAuthModal());
+    authBackdrop.addEventListener('click', e => { if(e.target===authBackdrop) closeAuthModal(); });
+
+    // Botão de acesso interno
+    $('accessInternalBtn').addEventListener('click', () => openAuthModal());
+
+  </script>
+</body>
+</html>

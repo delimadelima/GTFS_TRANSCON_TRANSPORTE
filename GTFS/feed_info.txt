@@ -1,0 +1,2 @@
+feed_publisher_name,feed_publisher_url,feed_contact_email,feed_contact_url,feed_lang,feed_start_date,feed_end_date,feed_version
+Mobilibus,https://site.mobilibus.com,suporte@mobilibus.com.br,https://site.mobilibus.com/#contact,pt-BR,20000101,20261231,202509260200

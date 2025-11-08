@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SIM – Sistema Integrado de Mobilidade de Contagem</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+
+  <style>
+    :root{
+      --accent:#005029;
+      --accent-2:#e0ff41;
+      --accent-3:#058933;
+      --muted:#6b7280;
+      --bg:#f4f7fb;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:#0f172a;padding-top:120px}
+
+    /* Header */
+    header{
+      position:fixed; top:0; left:0; right:0; height:115px; display:flex; align-items:center; justify-content:space-between;
+      background:#fff; z-index:1200; box-shadow:0 6px 18px rgba(2,6,23,0.06);
+      padding: 0 20px;
+    }
+    .header-content {
+      display:flex; align-items:center; gap:20px; position:absolute; left:50%; transform:translateX(-50%);
+    }
+    header a{text-decoration:none; display:flex; flex-direction:column; align-items:center; cursor:default;}
+    header img{height:70px; width:auto; max-height:70px;}
+    #top-right-controls { display:flex; align-items:center; gap:8px; position:absolute; right:20px; top:15px; z-index:1201; }
+    #clock{ font-family:Consolas,monospace; font-size:1.2em; font-weight:600; color:var(--accent); padding:6px 10px; border-radius:8px; background:#f4f7fb; border:1px solid #eef3fb; }
+    #music-btn{ padding:6px 8px; border-radius:8px; background:#f4f7fb; border:1px solid #eef3fb; cursor:pointer; }
+    #music-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+    #sim-logout-btn{ display:none; background:#ff5c5c; color:#fff; border:none; padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; margin-left:8px; }
+
+    .container{display:grid;grid-template-columns:360px 1fr;gap:14px;padding:16px;max-width:1600px;margin:0 auto;}
+    .panel{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 6px rgba(2,6,23,0.04)}
+    input,select,button{padding:10px;border-radius:10px;border:1px solid #e6eef6;font-size:14px}
+    button{cursor:pointer;background:var(--accent);color:white;border:none;transition:all 0.15s ease}
+    button.ghost{background:transparent;color:var(--accent-3);border:1px solid rgba(5,137,51,0.12)}
+    #map{height:600px;border-radius:12px}
+
+    .tab-menu-wrapper{display:flex;justify-content:center;gap:8px;margin-bottom:12px}
+    .tab-btn{transition:background .2s;color:#6b7280;padding:8px 10px;border-radius:8px;border:1px solid #e6eef6;background:transparent}
+    .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .ghost{background:transparent;border:1px solid #e6eef6;color:var(--muted)}
+
+    /* Nearby list */
+    #nearby-lines-list .list-group-item{ cursor:pointer;padding:8px 10px;border:1px solid #eef3fb;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;background:#f8fafc }
+    .line-code{font-weight:700;margin-right:5px}
+
+    /* AUTH MODAL */
+    .auth-modal-backdrop{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; z-index:2200 }
+    .auth-modal{ width:360px; background:#fff; padding:18px; border-radius:12px; box-shadow:0 12px 40px rgba(2,6,23,0.28) }
+    .auth-modal h3{ margin:0 0 8px; font-size:18px; color:var(--accent) }
+    .auth-modal .small{ font-size:13px; color:var(--muted); margin-bottom:10px }
+    .auth-modal input{ width:100%; padding:10px; margin-bottom:8px; border-radius:8px; border:1px solid #eef3fb }
+    .auth-modal .actions{ display:flex; gap:8px; justify-content:space-between; margin-top:8px }
+    .auth-modal .btn-cancel{ background:transparent; border:1px solid #e6eef6; color:var(--muted) }
+    .auth-modal .btn-ok{ background:var(--accent); color:#fff }
+
+    /* GTFS status */
+    #gtfsStatus{ margin-left:8px; font-size:13px; color:var(--muted) }
+
+    /* trip-time styles */
+    .trip-time{ padding:6px 8px; border-radius:6px; font-size:14px; font-weight:500; cursor:pointer; background:white; border:1px solid #e6eef6; text-align:center }
+    .trip-time:hover, .trip-time.selected{ background:var(--accent); color:white; border-color:var(--accent) }
+
+    @media (max-width:980px){
+      .container{grid-template-columns:1fr;padding:12px}
+      body{padding-top:140px}
+      .header-content{ gap:10px; flex-direction:column; position:static; transform:none }
+      header{ flex-direction:column; height:auto; padding:10px 0 }
+      #top-right-controls{ position:static; margin-top:10px }
+      header img{ height:50px; }
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="musica-transcon" loop style="display:none;">
+    <source src="ASSETS/Guardiã do Trânsito.mp3" type="audio/mpeg">
+  </audio>
+
+  <header>
+    <div class="header-content">
+      <img src="ASSETS/Incon Logo.png" alt="Icon Logo" class="icon-logo">
+      <a href="#" class="logo-sim-link" title="SIM">
+        <img src="ASSETS/Incon_Sim_1.png" alt="SIM Logo">
+        <div style="font-size:14px; font-weight:700; color:var(--accent); text-align:center; margin-top:4px;">Sistema Integrado de Mobilidade de Contagem</div>
+      </a>
+    </div>
+
+    <div id="top-right-controls">
+      <button id="music-btn" title="Tocar/Pausar música"><span id="music-icon">🎶</span></button>
+      <div id="clock">--:--:--</div>
+      <button id="sim-logout-btn" title="Sair da sessão interna">Sair</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="panel controls">
+      <div class="tab-menu-wrapper">
+        <button id="tabPlan" data-tab="plan" class="tab-btn active" style="flex:1">Planejador de Viagens</button>
+        <button id="tabSearch" data-tab="search" class="tab-btn ghost" style="flex:1">Linhas & Horários</button>
+        <button id="tabLocal" data-tab="local" class="tab-btn ghost" style="flex:1">GEOP</button>
+        <button id="tabTools" data-tab="tools" class="tab-btn ghost" style="flex:1">Ferramentas</button>
+      </div>
+
+      <div id="tabContent">
+        <div id="content-plan" class="tab-content">
+          <h2>1. Buscar Itinerário (A → B)</h2>
+          <div class="meta">Pesquise a melhor rota, incluindo baldeação se necessário.</div>
+          <div style="margin-top:10px">
+            <div class="row"><input id="originInput" placeholder="Origem (endereço ou parada)" list="stopsList" /></div>
+            <div class="row"><input id="destInput" placeholder="Destino (endereço ou parada)" list="stopsList" /></div>
+            <datalist id="stopsList"></datalist>
+            <div class="row"><label for="planDateInput" style="font-size:13px;color:var(--muted)">Data da Viagem:</label></div>
+            <div class="row"><input type="date" id="planDateInput" style="flex:1" value=""></div>
+            <div class="row">
+              <button id="searchBtn" style="background:var(--accent-2); color:var(--accent)">Buscar Trajeto</button>
+              <button id="clearBtn" class="ghost">Limpar</button>
+            </div>
+            <small class="note">A busca A→B considera baldeação e acesso/egresso a pé.</small>
+          </div>
+          <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
+          <div class="row" style="margin-bottom:12px"><button id="goToScheduleBtn" class="ghost" style="flex:1;background:#f6f9ff;color:var(--accent);border:none">Consultar Quadro de Horários →</button></div>
+          <div><h3>Opções Encontradas (Com Baldeação)</h3><div id="routesBetween" class="route-list">Nenhuma pesquisa ainda.</div></div>
+        </div>
+
+        <div id="content-search" class="tab-content" style="display:none;">
+          <h2>2. Quadro de Horários por Linha</h2>
+          <div class="meta">Selecione uma linha e uma data para visualizar os horários de forma clara e elegante.</div>
+          <div style="margin-top:10px">
+            <div class="row">
+              <select id="lineSearchSelect" style="flex:2"><option value="">Todas as Linhas</option></select>
+              <button id="clearScheduleSearchBtn" class="ghost" style="flex:1">Limpar</button>
+              <button id="searchLineBtn" style="flex:1">Buscar</button>
+            </div>
+            <div class="row"><label for="scheduleDateInput" style="font-size:13px;color:var(--muted)">Data do Quadro:</label></div>
+            <div class="row"><input type="date" id="scheduleDateInput" style="flex:1" /></div>
+            <small class="note">Linha: <span id="selectedLineName">(Todas)</span> - Dia: <span id="activeDayDisplay">...</span></small>
+          </div>
+          <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
+          <div><h3>Horários de Partida (Sentido)</h3><div id="scheduleContainer">Carregue GTFS para ver viagens.</div>
+            <div style="display:flex; gap:8px; margin-top:8px">
+              <button id="btnLocateVehicle" class="ghost">Localizar Veículo (GPS)</button>
+              <button id="btnNearestVehicle" class="ghost">Veículo mais próximo</button>
+              <button id="btnBackFromTrip" class="ghost" style="margin-left:auto; display:none">◀ Voltar</button>
+            </div>
+          </div>
+          <div style="margin-top:10px"><h3>Itinerário & Pontos (Mapa)</h3><div id="itinerary" class="itinerary">Selecione uma viagem para ver o itinerário.</div></div>
+          <div style="margin-top:10px"><h3>Relatórios de Viagem</h3>
+            <div style="display:flex; gap:8px; margin-bottom:8px">
+              <select id="reportTypeSelect" style="flex:1"><option value="delay">Atraso</option><option value="canceled">Cancelamento</option><option value="broken">Carro Quebrado</option><option value="other">Outro</option></select>
+              <input id="reportNote" placeholder="Observação (opcional)" style="flex:2" />
+              <button id="btnSendReport" class="ghost">Enviar Relatório</button>
+            </div>
+            <div id="reportsPanel">Nenhum relatório ainda.</div>
+          </div>
+        </div>
+
+        <div id="content-local" class="tab-content" style="display:none;">
+          <h2>3. Linhas Próximas ao Local (GEOP)</h2>
+          <div class="meta">Insira um endereço, referência ou coordenadas (Lat,Lon).</div>
+          <div style="margin-top:10px">
+            <div class="row">
+              <input type="text" id="local-input" placeholder="Ex: Rua A ou -19.92, -43.94" style="flex:2" />
+              <button id="searchLocalBtn" class="ghost" style="flex:1; min-width:110px">Buscar</button>
+            </div>
+            <div class="row" style="justify-content:space-between">
+              <button id="useGpsBtn" class="ghost" style="flex:1;background:#f6f9ff;color:var(--accent);border:none;margin-right:8px">Usar Minha Localização (GPS)</button>
+              <div style="flex:1;max-width:150px;display:flex">
+                <span style="padding:10px 6px; background:#fff; border-radius:10px 0 0 10px; border:1px solid #eef3fb">Raio (m):</span>
+                <input type="number" id="local-radius" value="500" min="50" max="2000" style="border-radius:0 10px 10px 0; border-left:none; flex:1" />
+              </div>
+            </div>
+            <div id="local-result-message" style="margin-top:8px;color:var(--muted);font-size:13px">Insira um local para iniciar a busca.</div>
+          </div>
+          <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
+          <div style="max-height:400px; overflow-y:auto" id="nearby-lines-list"><p style="padding:16px;color:#64748b">Carregue GTFS e insira o local de busca.</p></div>
+        </div>
+
+        <div id="content-tools" class="tab-content" style="display:none;">
+          <h2>4. Carregamento de Dados / Ferramentas</h2>
+          <div class="meta">Os dados GTFS estão sendo carregados automaticamente da pasta `./GTFS/` na inicialização.</div>
+
+          <div style="margin-top:8px; display:flex; align-items:center; gap:8px">
+            <button id="loadBtn" class="ghost" style="flex:1">Recarregar GTFS (da pasta ./GTFS/)</button>
+            <span id="gtfsStatus">Nenhum GTFS carregado.</span>
+          </div>
+
+          <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <h4>Funções Essenciais</h4>
+            <div id="totalStopsCount">0 paradas</div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px">
+            <button id="resetMapBtn" class="ghost">Redefinir Mapa/Paradas</button>
+            <button class="ghost" disabled style="color:var(--muted)">Função (A ser feita)</button>
+          </div>
+          
+          <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
+          <div id="employee-registration-section" style="display:none;">
+              <h4>Cadastro de Funcionário (Admin)</h4>
+              <div class="meta">Crie uma nova conta de acesso Interno (Staff) ou Administrador.</div>
+              <div style="margin-top:8px;">
+                  <input type="text" id="new-user-name" placeholder="Nome de Usuário (Ex: nome.sobrenome)" style="width:100%; margin-bottom:8px;" />
+                  <input type="password" id="new-user-pass" placeholder="Senha" style="width:100%; margin-bottom:8px;" />
+                  <select id="new-user-role" style="width:100%; margin-bottom:8px;">
+                      <option value="staff">Funcionário (Staff)</option>
+                      <option value="admin">Administrador (Admin)</option>
+                  </select>
+                  <button id="registerUserBtn" style="width:100%;">Cadastrar Novo Usuário</button>
+                  <div id="registration-message" style="margin-top:8px; font-size:13px; color:var(--accent-3);"></div>
+              </div>
+          </div>
+          </div>
+      </div>
+
+      <div style="margin-top:20px" class="footer-legend">
+        <div style="background:var(--accent-2); color:var(--accent); font-weight:700; padding:6px 10px; border-radius:999px">Valor sugerido: R$ 6,40</div>
+        <div class="meta">Rotas integradas ao metrô serão sinalizadas.</div>
+      </div>
+    </div>
+
+    <div>
+      <div id="map" class="panel"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:4px 10px;background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(2,6,23,0.04)">
+        <label><input type="checkbox" id="toggleAllStops" checked /> Exibir todas as paradas (Cluster)</label>
+        <div class="meta"><div id="searchSummary">Nenhuma pesquisa realizada ainda.</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <div class="panel" style="flex:1">
+          <h4>Melhor opção (Trajeto A→B)</h4>
+          <div id="bestOption">Busque rota para calcular.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="text-align:center;padding:12px 8px;background:#fff;margin-top:20px;border-top:1px solid #eef2f7">
+    <strong>GTFS – Transporte Municipal de Contagem</strong>
+    <div class="small">SIM – Sistema Integrado de Mobilidade de Contagem — Visor local</div>
+  </footer>
+
+  <div id="authBackdrop" class="auth-modal-backdrop" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-modal="true">
+      <h3>Acesso Interno</h3>
+      <div class="small">Informe usuário e senha para acessar GEOP e Ferramentas.</div>
+      <input id="authUser" placeholder="Usuário" autocomplete="username" />
+      <input id="authPass" placeholder="Senha" type="password" autocomplete="current-password" />
+      <div id="authMsg" class="small" style="color:#ff5c5c; display:none"></div>
+      <div class="actions">
+        <button id="authCancel" class="btn-cancel">Cancelar</button>
+        <button id="authOk" class="btn-ok">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+  <script>
+  /************************************************************************
+   * Inicialização: cria admin padrão (se não existir)
+   ************************************************************************/
+  (function(){
+    try {
+      const users = JSON.parse(localStorage.getItem('sim_users')||'{}');
+      // Adiciona o usuário Administrador padrão
+      if(!users['carloslima']){
+        users['carloslima'] = { password: 'delima14delima', role:'admin', name:'Carlos Lima' };
+        localStorage.setItem('sim_users', JSON.stringify(users));
+      }
+    } catch(e){ console.warn('init user error', e); }
+  })();
+
+  // Helpers
+  const $ = id => document.getElementById(id);
+  function show(el){ if(el) el.style.display=''; }
+  function hide(el){ if(el) el.style.display='none'; }
+
+  // Clock
+  function updateClock(){ const now = new Date(); $('clock').textContent = now.toLocaleTimeString('pt-BR', {hour12:false}); }
+  setInterval(updateClock,1000); updateClock();
+
+  // Map setup
+  const map = L.map('map',{preferCanvas:true}).setView([-19.919, -44.052], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(map);
+  let routeLayer = L.layerGroup().addTo(map);
+  let allStopsCluster = L.markerClusterGroup({ maxClusterRadius:80, chunkedLoading:true }).addTo(map);
+
+  // GTFS container
+  let GTFS = { files:{}, stops:[], routes:[], trips:[], stop_times:[], shapes:[], calendar:[], calendar_dates:[] , shapesById: {}, stopsById:{}, tripsById:{}, routesById:{} };
+
+  // Utility functions
+  function parseCSV(text){ return Papa.parse(text, { header:true, skipEmptyLines:true }).data; }
+  function formatMinutes(mins){ if(mins==null) return '—'; if(mins<60) return mins+' min'; const h=Math.floor(mins/60), m=mins%60; return h+'h '+(m?m+'m':''); }
+  function haversine(a,b){ const toRad=v=>v*Math.PI/180; const R=6371e3; const dlat=toRad(b.lat-a.lat), dlon=toRad(b.lon-a.lon), lat1=toRad(a.lat), lat2=toRad(b.lat); const sinlat=Math.sin(dlat/2), sinlon=Math.sin(dlon/2); const c=2*Math.atan2(Math.sqrt(sinlat*sinlat + Math.cos(lat1)*Math.cos(lat2)*sinlon*sinlon), Math.sqrt(1-(sinlat*sinlat + Math.cos(lat1)*Math.cos(lat2)*sinlon*sinlon))); return R*c; }
+
+  /************************************************************************
+   * AUTH (modal)
+   ************************************************************************/
+  const authBackdrop = $('authBackdrop'), authUser = $('authUser'), authPass = $('authPass'), authOk = $('authOk'), authCancel = $('authCancel');
+  const logoutBtn = $('sim-logout-btn');
+
+  function showAuthMessage(msg){ const el=$('authMsg'); if(msg){ el.style.display='block'; el.textContent = msg; } else { el.style.display='none'; el.textContent=''; } }
+
+  function openAuthModal(purpose){
+    showAuthMessage('');
+    authUser.value=''; authPass.value='';
+    authBackdrop.style.display='flex'; authBackdrop.setAttribute('aria-hidden','false');
+    authBackdrop.dataset.purpose = purpose || '';
+    setTimeout(()=>authUser.focus(),50);
+  }
+  function closeAuthModal(){ authBackdrop.style.display='none'; authBackdrop.setAttribute('aria-hidden','true'); authBackdrop.dataset.purpose=''; }
+
+  function setSession(role, username){
+    sessionStorage.setItem('sim_role', role);
+    sessionStorage.setItem('sim_user', username||'');
+    updateAuthUI();
+  }
+  function clearSession(){
+    sessionStorage.removeItem('sim_role'); sessionStorage.removeItem('sim_user');
+    updateAuthUI();
+  }
+
+  function updateAuthUI(){
+    const role = sessionStorage.getItem('sim_role') || 'public';
+    const user = sessionStorage.getItem('sim_user') || '';
+    if(role==='staff' || role==='admin'){ $('sim-logout-btn').style.display='inline-block'; }
+    else { $('sim-logout-btn').style.display='none'; }
+
+    let uel = document.getElementById('sim-user-info');
+    if(!uel){
+      uel = document.createElement('div'); uel.id='sim-user-info'; uel.style.fontSize='13px'; uel.style.color='var(--muted)'; uel.style.marginLeft='12px';
+      document.querySelector('header').appendChild(uel);
+    }
+    if(role==='public') uel.textContent='Visão Pública'; else uel.textContent = (user?user:'Funcionário') + ' — ' + (role==='admin'?'Administrador':'Interno');
+
+    // controls lock
+    const allowed = (role==='staff' || role==='admin');
+    $('content-local').style.display = allowed ? '' : 'none';
+    $('content-tools').style.display = allowed ? '' : 'none';
+    
+    // NOVO: Atualiza a UI de cadastro
+    updateRegistrationUI();
+  }
+
+  // NOVO: CADASTRO DE FUNCIONÁRIOS (Admin Only)
+  const registrationSection = $('employee-registration-section');
+  const registerUserBtn = $('registerUserBtn');
+  const regMsg = $('registration-message');
+
+  function updateRegistrationUI(){
+    const role = sessionStorage.getItem('sim_role') || 'public';
+    // Mostra a seção de cadastro APENAS para o Administrador
+    if(role === 'admin'){
+      show(registrationSection);
+    } else {
+      hide(registrationSection);
+    }
+  }
+
+  registerUserBtn.addEventListener('click', function(){
+    // Normaliza o username: trim, lowercase, remove espaços e pontos para a chave
+    const username = $('new-user-name').value.trim().toLowerCase().replace(/\s/g, '').replace(/\./g, ''); 
+    const password = $('new-user-pass').value;
+    const role = $('new-user-role').value;
+
+    regMsg.textContent = '';
+    
+    if(!username || !password){ regMsg.textContent = 'Preencha usuário e senha.'; regMsg.style.color='#ff5c5c'; return; }
+    
+    try {
+      const users = JSON.parse(localStorage.getItem('sim_users') || '{}');
+      if(users[username]){ regMsg.textContent = `Usuário "${username}" já existe!`; regMsg.style.color='#ff5c5c'; return; }
+
+      // Adiciona o novo usuário
+      users[username] = { password: password, role: role, name: username.toUpperCase().replace(/\./g, ' ') };
+      localStorage.setItem('sim_users', JSON.stringify(users));
+      
+      regMsg.textContent = `Usuário ${username} (${role}) cadastrado com sucesso!`;
+      regMsg.style.color='var(--accent-3)'; // Cor verde para sucesso
+      $('new-user-name').value = '';
+      $('new-user-pass').value = '';
+      
+      // Atualiza a UI para refletir a nova lista, caso necessário
+      updateRegistrationUI(); 
+
+    } catch(e){
+      console.error('Registration error', e);
+      regMsg.textContent = 'Erro ao cadastrar usuário.';
+      regMsg.style.color='#ff5c5c';
+    }
+  });
+  // FIM NOVO CADASTRO
+
+  authOk.addEventListener('click', function(){
+    const u = authUser.value.trim().toLowerCase().replace(/\s/g, '').replace(/\./g, ''); // Usa a chave normalizada
+    const p = authPass.value;
+    if(!u || !p){ showAuthMessage('Informe usuário e senha.'); return; }
+    try {
+      const users = JSON.parse(localStorage.getItem('sim_users') || '{}');
+      const uu = users[u];
+      if(uu && uu.password === p){
+        const role = uu.role === 'admin' ? 'admin' : 'staff';
+        setSession(role, u);
+        closeAuthModal();
+        const purpose = authBackdrop.dataset.purpose || '';
+        // Nota: O redirecionamento para admin.html foi removido, focando apenas no fluxo do index.html
+        if(purpose){ const btn = document.querySelector('[data-tab="'+purpose+'"]'); if(btn) activateTabButton(btn); }
+        // Força a atualização da UI, incluindo o novo painel de registro
+        updateRegistrationUI(); 
+        return;
+      } else { showAuthMessage('Usuário ou senha inválidos.'); }
+    } catch(e){ console.error('auth error', e); showAuthMessage('Erro ao validar usuário.'); }
+  });
+  authCancel.addEventListener('click', ()=>closeAuthModal());
+  authBackdrop.addEventListener('click', e => { if(e.target===authBackdrop) closeAuthModal(); });
+
+  logoutBtn.addEventListener('click', function(){
+    if(!confirm('Deseja encerrar a sessão interna?')) return;
+    clearSession();
+    // reload to ensure protections applied
+    location.reload();
+  });
+
+  updateAuthUI();
+
+  /************************************************************************
+   * TAB NAV
+   ************************************************************************/
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  tabButtons.forEach(btn => btn.addEventListener('click', e=>{
+    const tab = btn.getAttribute('data-tab');
+    if(tab==='local' || tab==='tools'){
+      const role = sessionStorage.getItem('sim_role') || 'public';
+      if(!(role === 'staff' || role === 'admin')){ openAuthModal(tab); return; }
+    }
+    activateTabButton(btn);
+  }));
+
+  function activateTabButton(btn){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.getAttribute('data-tab');
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    const showId = 'content-' + tab;
+    const showEl = document.getElementById(showId);
+    if(showEl) showEl.style.display = '';
+  }
+  activateTabButton(document.querySelector('[data-tab="plan"]'));
+
+  /************************************************************************
+   * GTFS LOADING HYBRID (fetch relative path OR file input)
+   ************************************************************************/
+  const gtfsRelativeFolder = './GTFS/'; // relative path attempted when running via server
+  const expectedFiles = ['stops.txt','routes.txt','trips.txt','stop_times.txt','shapes.txt','calendar.txt','calendar_dates.txt','fare_attributes.txt','fare_rules.txt','frequencies.txt'];
+
+  // Try to fetch relative path (only works if served over http server)
+  async function tryLoadGTFSFromRelative(){
+    try {
+      // quick test fetch stops.txt
+      const resp = await fetch(gtfsRelativeFolder + 'stops.txt', {cache:'no-cache'});
+      if(!resp.ok) throw new Error('not found');
+      // load all present files
+      const loaded = {};
+      for(const fn of expectedFiles){
+        try {
+          const r = await fetch(gtfsRelativeFolder + fn, {cache:'no-cache'});
+          if(r.ok){
+            const text = await r.text();
+            const key = fn.split('/').pop().replace('.txt','');
+            loaded[key] = parseCSV(text);
+          }
+        } catch(e){}
+      }
+      applyLoadedGTFS(loaded, 'relativo');
+      return true;
+    } catch(e){
+      // console.log('relative load failed', e);
+      return false;
+    }
+  }
+
+  // Apply GTFS into GTFS object and index
+  function applyLoadedGTFS(loaded, sourceLabel){
+    // Merge known keys
+    ['stops','routes','trips','stop_times','shapes','calendar','calendar_dates','fare_attributes','frequencies'].forEach(k=>{
+      if(loaded[k]) GTFS[k] = loaded[k];
+    });
+
+    // index
+    GTFS.stopsById = {}; if(GTFS.stops) GTFS.stops.forEach(s => GTFS.stopsById[s.stop_id]=s);
+    GTFS.tripsById = {}; if(GTFS.trips) GTFS.trips.forEach(t => GTFS.tripsById[t.trip_id]=t);
+    GTFS.routesById = {}; if(GTFS.routes) GTFS.routes.forEach(r => GTFS.routesById[r.route_id]=r);
+    GTFS.stopTimesByTrip = {}; if(GTFS.stop_times) GTFS.stop_times.forEach(st=>{ if(!GTFS.stopTimesByTrip[st.trip_id]) GTFS.stopTimesByTrip[st.trip_id]=[]; GTFS.stopTimesByTrip[st.trip_id].push(st); });
+    for(const k in GTFS.stopTimesByTrip) GTFS.stopTimesByTrip[k].sort((a,b)=>parseInt(a.stop_sequence)-parseInt(b.stop_sequence));
+    // shapes
+    GTFS.shapesById = {};
+    if(GTFS.shapes) GTFS.shapes.forEach(s => { if(!GTFS.shapesById[s.shape_id]) GTFS.shapesById[s.shape_id]=[]; GTFS.shapesById[s.shape_id].push({lat:parseFloat(s.shape_pt_lat), lon:parseFloat(s.shape_pt_lon), seq: parseInt(s.shape_pt_sequence)}); });
+    for(const k in GTFS.shapesById) GTFS.shapesById[k].sort((a,b)=>a.seq-b.seq);
+
+    // trip counts
+    GTFS.tripCounts = {};
+    if(GTFS.trips) GTFS.trips.forEach(trip => { GTFS.tripCounts[trip.route_id] = (GTFS.tripCounts[trip.route_id]||0)+1; });
+
+    // show totals
+    $('totalStopsCount').textContent = (GTFS.stops?GTFS.stops.length:0) + ' paradas';
+    $('gtfsStatus').textContent = 'GTFS carregado ('+sourceLabel+'). Paradas: ' + (GTFS.stops?GTFS.stops.length:0);
+
+    populateStopsDatalist();
+    populateRoutesSelect();
+
+    // add stops to cluster
+    if(GTFS.stops){
+      allStopsCluster.clearLayers();
+      GTFS.stops.forEach(s=>{
+        try {
+          const mk = L.marker([parseFloat(s.stop_lat), parseFloat(s.stop_lon)]).bindPopup(s.stop_name);
+          allStopsCluster.addLayer(mk);
+        } catch(e){}
+      });
+      if(!map.hasLayer(allStopsCluster)) map.addLayer(allStopsCluster);
+    }
+  }
+
+  // Buttons
+  $('loadBtn').addEventListener('click', async ()=>{
+    // Recarregar GTFS (da pasta ./GTFS/)
+    $('gtfsStatus').textContent = 'Tentando recarregar GTFS da pasta ./GTFS/...';
+    const ok = await tryLoadGTFSFromRelative();
+    if(!ok) $('gtfsStatus').textContent = 'Falha ao carregar GTFS da pasta ./GTFS/. Verifique se o servidor está ativo e os arquivos estão presentes.';
+  });
+
+  // Attempt automatic load from relative server path on page load
+  window.addEventListener('load', async ()=>{
+    updateAuthUI();
+    activateTabButton(document.querySelector('[data-tab="plan"]'));
+
+    // 🚀 Carregamento automático garantido (forçado sem cache)
+    $('gtfsStatus').textContent = 'Carregando GTFS automaticamente...';
+    try {
+      const auto = await tryLoadGTFSFromRelative();
+      if (auto) {
+        $('gtfsStatus').textContent = 'GTFS carregado automaticamente com sucesso.';
+        console.log('GTFS carregado automaticamente da pasta ./GTFS/');
+      } else {
+        $('gtfsStatus').textContent = 'Falha ao carregar GTFS automaticamente. Verifique a pasta ./GTFS/';
+      }
+    } catch (e) {
+      $('gtfsStatus').textContent = 'Erro ao tentar carregar GTFS automaticamente.';
+      console.error('Erro no carregamento automático GTFS:', e);
+    }
+
+    // Detectar mudanças periódicas (mantido)
+    checkGtfsUpdates?.();
+
+    // Map click para preencher origem/destino
+    map.on('click', function(e){
+      if(!GTFS.stops) return;
+      let best=null, bestD=1e9;
+      GTFS.stops.forEach(s => { const d = haversine({lat:e.latlng.lat, lon:e.latlng.lng}, {lat:parseFloat(s.stop_lat), lon:parseFloat(s.stop_lon)}); if(d < bestD){ bestD = d; best = s; }});
+      if(best){
+        const val = `${best.stop_name} (${best.stop_id})`;
+        if(!$('originInput').value) $('originInput').value = val; else $('destInput').value = val;
+      }
+    });
+
+    // Attach other UI events
+    $('searchBtn').addEventListener('click', handleSearchAToB);
+    $('clearBtn').addEventListener('click', resetMapView);
+    $('resetMapBtn').addEventListener('click', resetMapView);
+    $('searchLocalBtn').addEventListener('click', searchNearbyLinesByInput);
+    $('useGpsBtn').addEventListener('click', getUserLocationAndSearch);
+    $('tabPlan').addEventListener('click', ()=>activateTabButton(document.querySelector('[data-tab="plan"]')));
+    $('tabSearch').addEventListener('click', ()=>activateTabButton(document.querySelector('[data-tab="search"]')));
+    $('tabLocal').addEventListener('click', ()=>{ const role = sessionStorage.getItem('sim_role') || 'public'; if(!(role==='staff' || role==='admin')){ openAuthModal('local'); return; } activateTabButton(document.querySelector('[data-tab="local"]')); });
+    $('tabTools').addEventListener('click', ()=>{ const role = sessionStorage.getItem('sim_role') || 'public'; if(!(role==='staff' || role==='admin')){ openAuthModal('tools'); return; } activateTabButton(document.querySelector('[data-tab="tools"]')); });
+
+    // music
+    $('music-btn').addEventListener('click', ()=>{
+      const a = document.getElementById('musica-transcon'); if(a.paused){ a.play().catch(()=>{}); $('music-btn').classList.add('active'); } else { a.pause(); $('music-btn').classList.remove('active'); }
+    });
+
+    // logout button placement handled in CSS; it's hidden until logged in
+
+  });
+  /* END PART 1/3 */
+  </script>
+<script>
+/************************************************************************
+ * Populate selects & datalists after GTFS load
+ ************************************************************************/
+function populateStopsDatalist(){
+  const dl = $('stopsList');
+  if(!dl) return;
+  dl.innerHTML = '';
+  (GTFS.stops || []).forEach(s=>{
+    const opt = document.createElement('option');
+    opt.value = `${s.stop_name} (${s.stop_id})`;
+    dl.appendChild(opt);
+  });
+}
+function populateRoutesSelect(){
+  const sel = $('lineSearchSelect');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">Todas as Linhas</option>';
+  (GTFS.routes || []).forEach(r=>{
+    const opt = document.createElement('option');
+    opt.value = r.route_id;
+    opt.textContent = `${r.route_short_name || ''} - ${r.route_long_name || ''}`;
+    sel.appendChild(opt);
+  });
+}
+
+/************************************************************************
+ * Buscar Itinerário A→B (planejador simples)
+ ************************************************************************/
+function handleSearchAToB(){
+  const orig = $('originInput').value.trim(), dest = $('destInput').value.trim();
+  if(!orig || !dest){ alert('Informe origem e destino.'); return; }
+  if(!GTFS.stops || GTFS.stops.length === 0){ alert('GTFS não carregado.'); return; }
+  const getStopId = v => {
+    const m = v.match(/\(([^)]+)\)$/);
+    return m ? m[1] : null;
+  };
+  const oId = getStopId(orig), dId = getStopId(dest);
+  if(!oId || !dId){ alert('Selecione origem/destino válidos da lista.'); return; }
+  const origin = GTFS.stopsById[oId], destStop = GTFS.stopsById[dId];
+  if(!origin || !destStop){ alert('Paradas inválidas.'); return; }
+
+  // encontrar todas as rotas que passam pela origem e destino
+  const tripsOrigin = [], tripsDest = [];
+  for(const tripId in GTFS.stopTimesByTrip){
+    const stops = GTFS.stopTimesByTrip[tripId].map(st => st.stop_id);
+    if(stops.includes(oId)) tripsOrigin.push(tripId);
+    if(stops.includes(dId)) tripsDest.push(tripId);
+  }
+  const intersectTrips = tripsOrigin.filter(x => tripsDest.includes(x));
+  const possibleRoutes = [...new Set(intersectTrips.map(t => GTFS.tripsById[t].route_id))];
+
+  let html = '';
+  if(possibleRoutes.length === 0){
+    html = '<p style="padding:10px;color:#f59e0b">Nenhuma linha direta liga essas paradas.</p>';
+  } else {
+    html = possibleRoutes.map(rid=>{
+      const r = GTFS.routesById[rid];
+      return `<div class="list-group-item"><div><span class="line-code">${r.route_short_name}</span>${r.route_long_name}</div><button class="ghost" onclick="drawRoutePolylineByRoute('${r.route_id}')">Ver no Mapa</button></div>`;
+    }).join('');
+  }
+
+  $('routesBetween').innerHTML = html || 'Nenhuma rota encontrada.';
+  $('bestOption').innerHTML = html ? 'Linhas diretas listadas acima.' : 'Nenhuma rota direta encontrada.';
+}
+
+/************************************************************************
+ * Nearby lines by location (GEOP)
+ ************************************************************************/
+function searchNearbyLinesByInput(){
+  const inp = $('local-input').value.trim();
+  const rad = parseInt($('local-radius').value)||500;
+  if(!inp){ alert('Informe o local.'); return; }
+  let latlon = null;
+  const m = inp.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+  if(m) latlon = {lat:parseFloat(m[1]), lon:parseFloat(m[2])};
+  if(!latlon){ alert('Informe coordenadas no formato "-19.9, -43.9"'); return; }
+  findNearbyStops(latlon, rad);
+}
+function getUserLocationAndSearch(){
+  if(!navigator.geolocation){ alert('Navegador não suporta GPS.'); return; }
+  $('local-result-message').textContent = 'Obtendo localização...';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    $('local-input').value = coords.lat.toFixed(5)+', '+coords.lon.toFixed(5);
+    findNearbyStops(coords, parseInt($('local-radius').value)||500);
+  }, err=>{ $('local-result-message').textContent = 'Erro ao obter localização: '+err.message; });
+}
+
+function findNearbyStops(coords, radius){
+  if(!GTFS.stops || GTFS.stops.length===0){ alert('GTFS não carregado.'); return; }
+  const results = [];
+  GTFS.stops.forEach(s=>{
+    const d = haversine(coords, {lat:parseFloat(s.stop_lat), lon:parseFloat(s.stop_lon)});
+    if(d <= radius) results.push({...s, distance:d});
+  });
+  results.sort((a,b)=>a.distance-b.distance);
+  if(results.length===0){ $('local-result-message').textContent='Nenhuma parada próxima.'; $('nearby-lines-list').innerHTML=''; return; }
+  $('local-result-message').textContent = `${results.length} paradas encontradas em ${radius}m`;
+  const html = results.map(s=>`<div class="list-group-item"><div><strong>${s.stop_name}</strong><div class="meta">${Math.round(s.distance)} m</div></div><button class="ghost" onclick="centerMapOnStop('${s.stop_id}')">Ver</button></div>`).join('');
+  $('nearby-lines-list').innerHTML = html;
+}
+function centerMapOnStop(id){
+  const s = GTFS.stopsById[id];
+  if(!s) return;
+  map.setView([parseFloat(s.stop_lat), parseFloat(s.stop_lon)], 16);
+  L.popup().setLatLng([parseFloat(s.stop_lat), parseFloat(s.stop_lon)]).setContent(`<strong>${s.stop_name}</strong>`).openOn(map);
+}
+
+/************************************************************************
+ * Reset map
+ ************************************************************************/
+function resetMapView(){
+  map.setView([-19.919,-44.052],12);
+  routeLayer.clearLayers();
+  allStopsCluster.clearLayers();
+  if(GTFS.stops){
+    GTFS.stops.forEach(s=>{
+      try{
+        const mk = L.marker([parseFloat(s.stop_lat), parseFloat(s.stop_lon)]).bindPopup(s.stop_name);
+        allStopsCluster.addLayer(mk);
+      }catch(e){}
+    });
+  }
+}
+
+/************************************************************************
+ * LINHAS & HORÁRIOS (cards + mapa)
+ ************************************************************************/
+(function(){
+  let currentRoutePolyline = null;
+  const searchLineBtnEl = document.getElementById('searchLineBtn');
+  const clearScheduleBtnEl = document.getElementById('clearScheduleSearchBtn');
+  const scheduleContainerEl = document.getElementById('scheduleContainer');
+  const selectedLineNameEl = document.getElementById('selectedLineName');
+
+  if(searchLineBtnEl){
+    searchLineBtnEl.addEventListener('click', () => {
+      const routeId = (document.getElementById('lineSearchSelect')||{}).value;
+      if(!GTFS.routes || GTFS.routes.length === 0){
+        alert('GTFS não carregado. Vá em Ferramentas e carregue os arquivos primeiro.');
+        return;
+      }
+      if(!routeId){
+        scheduleContainerEl.innerHTML = '<p style="padding:10px;color:#64748b">Selecione uma linha.</p>';
+        return;
+      }
+      renderScheduleForRoute(routeId);
+    });
+  }
+
+  if(clearScheduleBtnEl){
+    clearScheduleBtnEl.addEventListener('click', () => {
+      document.getElementById('lineSearchSelect').value = '';
+      selectedLineNameEl.textContent = '(Todas)';
+      scheduleContainerEl.innerHTML = '<p style="padding:10px;color:#64748b">Selecione uma linha para visualizar os horários.</p>';
+      if(currentRoutePolyline){ routeLayer.removeLayer(currentRoutePolyline); currentRoutePolyline = null; }
+    });
+  }
+
+  function renderScheduleForRoute(routeId){
+    const route = GTFS.routesById ? GTFS.routesById[routeId] : null;
+    if(!route){
+      scheduleContainerEl.innerHTML = '<p style="padding:10px;color:#f59e0b">Linha não encontrada.</p>';
+      return;
+    }
+
+    selectedLineNameEl.textContent = `${route.route_short_name || ''} - ${route.route_long_name || ''}`;
+    const trips = (GTFS.trips || []).filter(t => t.route_id === routeId);
+    if(trips.length === 0){
+      scheduleContainerEl.innerHTML = '<p style="padding:10px;color:#64748b">Nenhuma viagem encontrada para esta linha.</p>';
+      return;
+    }
+
+    const grouping = {};
+    for(const trip of trips){
+      const dir = ((''+trip.direction_id) || '0');
+      const head = trip.trip_headsign || ('Sentido ' + dir);
+      if(!grouping[dir]) grouping[dir] = {};
+      if(!grouping[dir][head]) grouping[dir][head] = [];
+      grouping[dir][head].push(trip);
+    }
+
+    let html = `<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+                  <button id="btnShowRouteOnMap" class="ghost">Ver Traçado da Linha no Mapa</button>
+                  <button id="btnClearRouteMap" class="ghost">Ocultar Traçado</button>
+                 </div>`;
+
+    for(const dir in grouping){
+      for(const head in grouping[dir]){
+        const tripsArray = grouping[dir][head];
+        const tripItems = tripsArray.map(trip=>{
+          const st = (GTFS.stopTimesByTrip && GTFS.stopTimesByTrip[trip.trip_id]) || [];
+          let dep=null;
+          for(const t of st){ if(t.departure_time){dep=t.departure_time;break;} if(t.arrival_time){dep=t.arrival_time;break;} }
+          return { trip, dep, firstStop: st[0]||null };
+        }).filter(it=>it.dep).sort((a,b)=>{
+          const toSec=hms=>{const p=hms.split(':').map(Number);return p[0]*3600+p[1]*60+(p[2]||0);}
+          return toSec(a.dep)-toSec(b.dep);
+        });
+
+        html += `<div style="margin-bottom:18px;padding:10px;border-radius:8px;background:#ffffff;border:1px solid #eef3fb">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <div><strong>${head}</strong><div class="meta" style="color:var(--muted);font-size:13px">Trips: ${tripItems.length}</div></div>
+                    <div style="font-size:13px;color:var(--muted)">Sentido ID: ${dir}</div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px">`;
+
+        tripItems.forEach(ti=>{
+          html += `<div class="trip-time" style="background:#f1f9f2;border:1px solid #e6f4ea;padding:8px;border-radius:8px;cursor:pointer">
+                     <div style="font-weight:700;color:#0b6b3a">${ti.dep.substring(0,5)}</div>
+                     <div style="font-size:12px;color:#64748b;margin-top:4px">Trip: ${ti.trip.trip_id}</div>
+                     <div style="margin-top:6px;display:flex;gap:6px">
+                       <button class="ghost btn-view-trip" data-trip-id="${ti.trip.trip_id}" style="font-size:12px;padding:6px;border-radius:6px">Ver no Mapa</button>
+                       <button class="ghost btn-center-stop" data-stop-id="${ti.firstStop?ti.firstStop.stop_id:''}" style="font-size:12px;padding:6px;border-radius:6px">Centro Parada</button>
+                     </div>
+                   </div>`;
+        });
+        html += `</div></div>`;
+      }
+    }
+
+    scheduleContainerEl.innerHTML = html;
+
+    $('btnShowRouteOnMap').addEventListener('click', ()=> drawRoutePolylineByRoute(routeId));
+    $('btnClearRouteMap').addEventListener('click', ()=>{ if(currentRoutePolyline){ routeLayer.removeLayer(currentRoutePolyline); currentRoutePolyline=null; }});
+
+    scheduleContainerEl.querySelectorAll('.btn-view-trip').forEach(b=>{
+      b.addEventListener('click', ()=> drawRoutePolylineByTrip(b.dataset.tripId));
+    });
+    scheduleContainerEl.querySelectorAll('.btn-center-stop').forEach(b=>{
+      b.addEventListener('click', ()=> {
+        const stop = GTFS.stopsById[b.dataset.stopId];
+        if(!stop) return;
+        map.setView([parseFloat(stop.stop_lat), parseFloat(stop.stop_lon)], 16);
+        L.popup().setLatLng([parseFloat(stop.stop_lat), parseFloat(stop.stop_lon)]).setContent(`<strong>${stop.stop_name}</strong>`).openOn(map);
+      });
+    });
+  }
+
+  function drawRoutePolylineByTrip(tripId){
+    if(!GTFS.tripsById[tripId]) return alert('Trip não encontrada.');
+    const trip = GTFS.tripsById[tripId];
+    if(trip.shape_id && GTFS.shapesById[trip.shape_id]){
+      const pts = GTFS.shapesById[trip.shape_id].map(p=>[p.lat,p.lon]);
+      if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
+      currentRoutePolyline = L.polyline(pts,{color:'#007BFF',weight:5}).addTo(routeLayer);
+      map.fitBounds(currentRoutePolyline.getBounds(),{padding:[40,40]});
+      return;
+    }
+    const st = GTFS.stopTimesByTrip[tripId];
+    if(st && st.length>1){
+      const pts = st.map(x=>{const s=GTFS.stopsById[x.stop_id];return [parseFloat(s.stop_lat),parseFloat(s.stop_lon)];});
+      if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
+      currentRoutePolyline = L.polyline(pts,{color:'#007BFF',weight:5}).addTo(routeLayer);
+      map.fitBounds(currentRoutePolyline.getBounds(),{padding:[40,40]});
+    }
+  }
+
+  function drawRoutePolylineByRoute(routeId){
+    const trip = (GTFS.trips||[]).find(t=>t.route_id===routeId && t.shape_id && GTFS.shapesById[t.shape_id]);
+    if(trip){
+      const pts = GTFS.shapesById[trip.shape_id].map(p=>[p.lat,p.lon]);
+      if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
+      currentRoutePolyline = L.polyline(pts,{color:'#005029',weight:5}).addTo(routeLayer);
+      map.fitBounds(currentRoutePolyline.getBounds(),{padding:[40,40]});
+      return;
+    }
+    alert('Traçado não disponível para esta linha.');
+  }
+
+})();
+</script>
+<script>
+/************************************************************************
+ * Relatórios simples (aba Linhas & Horários)
+ ************************************************************************/
+(function(){
+  const reports = [];
+  const btn = $('btnSendReport');
+  if(!btn) return;
+
+  btn.addEventListener('click', ()=>{
+    const type = $('reportTypeSelect').value;
+    const note = $('reportNote').value.trim();
+    const now = new Date().toLocaleString('pt-BR');
+    const lineSel = $('lineSearchSelect');
+    const lineName = lineSel.options[lineSel.selectedIndex].textContent;
+    reports.push({ type, note, when:now, line:lineName });
+    $('reportsPanel').innerHTML = reports.map(r=>`<div style="padding:6px 8px;border:1px solid #e6eef6;border-radius:6px;margin-bottom:4px;background:#f8fafc"><strong>${r.type}</strong> em ${r.when}<br><small>${r.line}</small><br>${r.note}</div>`).join('');
+    $('reportNote').value = '';
+  });
+})();
+
+/************************************************************************
+ * Exportar horários CSV (extra)
+ ************************************************************************/
+(function(){
+  const makeCSV = (rows)=>{
+    const esc = v => `"${(v||'').toString().replace(/"/g,'""')}"`;
+    return rows.map(r=>r.map(esc).join(',')).join('\n');
+  };
+
+  const addExportButton = ()=>{
+    const cont = document.getElementById('scheduleContainer');
+    if(!cont) return;
+    let btn = document.getElementById('btnExportSchedule');
+    if(btn) return;
+    btn = document.createElement('button');
+    btn.id = 'btnExportSchedule';
+    btn.textContent = 'Exportar horários CSV';
+    btn.className = 'ghost';
+    btn.style.marginBottom = '10px';
+    cont.parentNode.insertBefore(btn, cont);
+    btn.addEventListener('click', ()=>{
+      const lineId = (document.getElementById('lineSearchSelect')||{}).value;
+      if(!lineId){ alert('Selecione uma linha.'); return; }
+      const trips = (GTFS.trips||[]).filter(t=>t.route_id===lineId);
+      if(!trips.length){ alert('Nenhuma viagem para exportar.'); return; }
+      const rows = [['trip_id','stop_sequence','arrival_time','departure_time','stop_id','stop_name']];
+      trips.forEach(t=>{
+        const sts = GTFS.stopTimesByTrip[t.trip_id]||[];
+        sts.forEach(st=>{
+          const s = GTFS.stopsById[st.stop_id];
+          rows.push([t.trip_id, st.stop_sequence, st.arrival_time, st.departure_time, st.stop_id, s?s.stop_name:'']);
+        });
+      });
+      const blob = new Blob([makeCSV(rows)], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `horarios_${lineId}.csv`;
+      a.click();
+    });
+  };
+  document.addEventListener('DOMContentLoaded', addExportButton);
+})();
+
+/************************************************************************
+ * Finaliza inicialização
+ ************************************************************************/
+window.addEventListener('load', ()=>{
+  console.log('Sistema SIM carregado com sucesso.');
+});
+</script>
+
+<script>
+/* =====================================================
+   AUTO-RELOAD GTFS A CADA 2 MINUTOS (AJUSTE SE QUISER)
+   ===================================================== */
+let lastModifiedCache = {};
+
+async function checkGtfsUpdates() {
+  const files = ['stops.txt','routes.txt','trips.txt','stop_times.txt','shapes.txt'];
+  let changed = false;
+
+  for (const f of files) {
+    try {
+      const resp = await fetch('./GTFS/' + f, { method: 'HEAD', cache: 'no-cache' });
+      const lm = resp.headers.get('last-modified');
+      if (!lastModifiedCache[f]) lastModifiedCache[f] = lm;
+      else if (lm && lastModifiedCache[f] !== lm) {
+        console.log('Arquivo alterado:', f);
+        changed = true;
+        lastModifiedCache[f] = lm;
+      }
+    } catch (e) { console.warn('Erro ao checar GTFS', f, e); }
+  }
+
+  if (changed) {
+    console.log('Alterações detectadas, recarregando GTFS...');
+    const ok = await tryLoadGTFSFromRelative();
+    if (ok) $('gtfsStatus').textContent = 'GTFS recarregado automaticamente (' + new Date().toLocaleTimeString() + ')';
+  }
+}
+
+// verifica a cada 2 minutos
+setInterval(checkGtfsUpdates, 120000);
+window.addEventListener('load', checkGtfsUpdates);
+</script>
+</body>
+</html>

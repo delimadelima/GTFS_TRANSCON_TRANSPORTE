@@ -1,0 +1,4 @@
+table_name,field_name,record_id,language,translation
+calendar,service_id,112013,pt-BR,Domingo
+calendar,service_id,312946,pt-BR,Sábado
+calendar,service_id,406127,pt-BR,Dia Útil
