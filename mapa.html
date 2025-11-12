@@ -33,60 +33,73 @@
     header img{height:70px; width:auto; max-height:70px;}
     #top-right-controls { display:flex; align-items:center; gap:8px; position:absolute; right:20px; top:15px; z-index:1201; }
     #clock{ font-family:Consolas,monospace; font-size:1.2em; font-weight:600; color:var(--accent); padding:6px 10px; border-radius:8px; background:#f4f7fb; border:1px solid #eef3fb; }
-    #music-btn{ padding:6px 8px; border-radius:8px; background:#f4f7fb; border:1px solid #eef3fb; cursor:pointer; }
-    #music-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
     #sim-logout-btn{ display:none; background:#ff5c5c; color:#fff; border:none; padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600; margin-left:8px; }
 
     .container{display:grid;grid-template-columns:360px 1fr;gap:14px;padding:16px;max-width:1600px;margin:0 auto;}
     .panel{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 6px rgba(2,6,23,0.04)}
     input,select,button{padding:10px;border-radius:10px;border:1px solid #e6eef6;font-size:14px}
     button{cursor:pointer;background:var(--accent);color:white;border:none;transition:all 0.15s ease}
-    button.ghost{background:transparent;color:var(--accent-3);border:1px solid rgba(5,137,51,0.12)}
+    button.ghost{cursor:pointer;background:transparent;color:var(--accent-3);border:1px solid rgba(5,137,51,0.12); transition:all 0.15s ease}
     
-    /* AJUSTE 4: Barra de rolagem no menu/controls e altura dinâmica do mapa */
     .panel.controls{
       overflow-y:auto; 
-      /* max-height = Altura total da tela - Altura do cabeçalho (115px) - Padding do container (16px * 2) - 5px de margem */
       max-height:calc(100vh - 152px); 
     }
     
     .tab-menu-wrapper{display:flex;justify-content:center;gap:8px;margin-bottom:12px}
     .tab-btn{transition:background .2s;color:#6b7280;padding:8px 10px;border-radius:8px;border:1px solid #e6eef6;background:transparent}
     .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .ghost{background:transparent;border:1px solid #e6eef6;color:var(--muted)}
 
     /* Nearby list */
     #nearby-lines-list .list-group-item{ cursor:pointer;padding:8px 10px;border:1px solid #eef3fb;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;background:#f8fafc }
     .line-code{font-weight:700;margin-right:5px}
 
-    /* AUTH MODAL */
-    .auth-modal-backdrop{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; z-index:2200 }
-    .auth-modal{ width:360px; background:#fff; padding:18px; border-radius:12px; box-shadow:0 12px 40px rgba(2,6,23,0.28) }
-    .auth-modal h3{ margin:0 0 8px; font-size:18px; color:var(--accent) }
-    .auth-modal .small{ font-size:13px; color:var(--muted); margin-bottom:10px }
-    .auth-modal input{ width:100%; padding:10px; margin-bottom:8px; border-radius:8px; border:1px solid #eef3fb }
-    .auth-modal .actions{ display:flex; gap:8px; justify-content:space-between; margin-top:8px }
-    .auth-modal .btn-cancel{ background:transparent; border:1px solid #e6eef6; color:var(--muted) }
-    .auth-modal .btn-ok{ background:var(--accent); color:#fff }
-
-    /* GTFS status */
-    #gtfsStatus{ margin-left:8px; font-size:13px; color:var(--muted) }
-
-    /* trip-time styles (AJUSTE 3a: Quadro de horário elegante) */
+    /* GEOP specific */
+    .geop-location-marker { 
+      border: 3px solid var(--accent-3); 
+      border-radius: 50%;
+      background: white;
+      width: 18px; /* Maior para A e B */
+      height: 18px;
+      transform: translate(-9px, -9px);
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      text-align: center;
+      line-height: 18px;
+      font-weight: bold;
+      color: var(--accent-3);
+    }
+    .geop-location-marker[style*="red"] {
+      color: red;
+    }
+    
+    /* trip-time styles */
     .trip-time{ width:96px; height:auto; min-height:96px; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:6px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; background:#fff; border:1px solid #e6eef6; text-align:center; box-shadow:0 6px 18px rgba(2,6,23,0.03) }
-    /* make the schedule container use a grid of square boxes */
     #scheduleContainer .trip-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap:10px }
     #selectedRouteSchedule{ max-height:320px; overflow:auto }
     .trip-time:hover, .trip-time.selected{ background:var(--accent); color:white; border-color:var(--accent) }
 
-    /* AJUSTE 2: Responsividade */
-    /* Estilo padrão para desktop */
+    /* Roteiro A->B (Planner) */
+    .route-option {
+      padding: 10px;
+      border: 1px solid #eef3fb;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s; 
+    }
+    .route-option:hover {
+      background: #f8fafc;
+    }
+    .route-option strong { color: var(--accent); }
+    .route-option .details { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+
+    /* Responsividade */
     @media (min-width: 981px) {
         #map{height:calc(100vh - 200px); min-height:300px; border-radius:12px}
         .container{height:calc(100vh - 120px);} 
     }
 
-    /* Estilo para mobile e tablet */
     @media (max-width:980px){
       .container{grid-template-columns:1fr;padding:12px; height:auto;}
       body{padding-top:140px}
@@ -95,21 +108,25 @@
       #top-right-controls{ position:static; margin-top:10px }
       header img{ height:50px; }
       
-      /* AJUSTE 4b: Limita altura do painel de controle em mobile para exibir o mapa */
       .panel.controls{
         max-height: 60vh; 
       }
-      /* Mapa com altura fixa em mobile */
       #map{height:300px; min-height:300px; border-radius:12px}
+    }
+    
+    /* Estilo para impressão */
+    @media print {
+      header, .panel.controls, .footer-legend, .auth-modal-backdrop, #top-right-controls { display:none !important; }
+      body { padding-top: 0; background: white; color: black; }
+      .container { display:block; padding: 0; max-width: none; }
+      .panel { box-shadow: none; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+      #map { height: 400px !important; margin-bottom: 10px; }
+      .leaflet-container { height: 100% !important; width: 100% !important; }
+      .leaflet-control-container, .leaflet-control-zoom { display: none !important; }
     }
   </style>
 </head>
 <body>
-
-  <audio id="musica-transcon" loop style="display:none;">
-    <source src="ASSETS/Guardiã do Trânsito.mp3" type="audio/mpeg">
-  </audio>
-
   <header>
     <div class="header-content">
       <img src="ASSETS/Incon Logo.png" alt="Icon Logo" class="icon-logo">
@@ -120,7 +137,6 @@
     </div>
 
     <div id="top-right-controls">
-      <button id="music-btn" title="Tocar/Pausar música"><span id="music-icon">🎶</span></button>
       <div id="clock">--:--:--</div>
       <button id="sim-logout-btn" title="Sair da sessão interna">Sair</button>
     </div>
@@ -138,22 +154,22 @@
       <div id="tabContent">
         <div id="content-plan" class="tab-content">
           <h2>1. Buscar Itinerário (A → B)</h2>
-          <div class="meta">Pesquise a melhor rota, incluindo baldeação se necessário.</div>
+          <div class="meta">Pesquise a melhor rota, incluindo baldeação se necessário, a partir do horário atual.</div>
           <div style="margin-top:10px">
-            <div class="row"><input id="originInput" placeholder="Origem (endereço ou parada)" list="stopsList" /></div>
-            <div class="row"><input id="destInput" placeholder="Destino (endereço ou parada)" list="stopsList" /></div>
+            <div class="row"><input id="originInput" placeholder="Origem (Nome da parada GTFS ou endereço)" list="stopsList" /></div>
+            <div class="row"><input id="destInput" placeholder="Destino (Nome da parada GTFS ou endereço)" list="stopsList" /></div>
             <datalist id="stopsList"></datalist>
             <div class="row"><label for="planDateInput" style="font-size:13px;color:var(--muted)">Data da Viagem:</label></div>
             <div class="row"><input type="date" id="planDateInput" style="flex:1" value=""></div>
             <div class="row">
               <button id="searchBtn" style="background:var(--accent-2); color:var(--accent)">Buscar Trajeto</button>
-              <button id="clearBtn" class="ghost">Limpar</button>
+              <button id="clearBtn" class="ghost">Limpar Pesquisa</button>
             </div>
             <small class="note">A busca A→B considera baldeação e acesso/egresso a pé.</small>
           </div>
           <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
-          <div class="row" style="margin-bottom:12px"><button id="goToScheduleBtn" class="ghost" style="flex:1;background:#f6f9ff;color:var(--accent);border:none" disabled>Consultar Quadro de Horários →</button></div>
-          <div><h3>Opções Encontradas (Com Baldeação)</h3><div id="routesBetween" class="route-list">Nenhuma pesquisa ainda.</div></div>
+          <div class="row" style="margin-bottom:12px"><button id="goToScheduleBtn" class="ghost" style="flex:1;background:#f6f9ff;color:var(--accent);border:none">Consultar Quadro de Horários →</button></div>
+          <div><h3>Opções Encontradas (Com Horários)</h3><div id="routesBetween" class="route-list">Nenhuma pesquisa ainda.</div></div>
         </div>
 
         <div id="content-search" class="tab-content" style="display:none;">
@@ -166,11 +182,8 @@
               <button id="searchLineBtn" style="flex:1">Buscar</button>
             </div>
             <div class="row"><label for="scheduleDateInput" style="font-size:13px;color:var(--muted)">Data do Quadro:</label></div>
-            <div class="row">
-              <input type="date" id="scheduleDateInput" style="flex:1" />
-              <span id="activeDayDisplay" style="padding:10px; border-radius:0 10px 10px 0; background:#f4f7fb; border:1px solid #e6eef6; border-left:none; color:var(--accent-3); font-weight:600;">...</span>
-            </div>
-            <small class="note">Linha: <span id="selectedLineName">(Todas)</span></small>
+            <div class="row"><input type="date" id="scheduleDateInput" style="flex:1" /></div>
+            <small class="note">Linha: <span id="selectedLineName">(Todas)</span> - Dia: <span id="activeDayDisplay">...</span></small>
           </div>
           <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
           <div>
@@ -198,13 +211,17 @@
 
         <div id="content-local" class="tab-content" style="display:none;">
           <h2>3. Linhas Próximas ao Local (GEOP)</h2>
-          <div class="meta">Insira um endereço, referência ou coordenadas (Lat,Lon).</div>
+          <div class="meta">Pesquise por **Logradouro (Rua, Av.)** ou **Coordenadas (Lat/Lon)**.</div>
           <div style="margin-top:10px">
             <div class="row">
-              <input type="text" id="local-input" placeholder="Ex: Rua A ou -19.92, -43.94" style="flex:2" />
-              <button id="searchLocalBtn" class="ghost" style="flex:1; min-width:110px">Buscar</button>
+              <input type="text" id="local-input-address" placeholder="Rua, Avenida, Beco ou Nome da Parada" style="flex:1" list="stopsList" />
+              <button id="searchLocalBtn" class="ghost" style="flex:0; min-width:110px; margin-left:8px;">Buscar</button>
             </div>
-            <div class="row" style="justify-content:space-between">
+            <div class="row" style="margin-top:8px; display:flex; gap:8px">
+              <input type="text" id="lat-input" placeholder="Latitude (Ex: -19.92)" style="flex:1" oninput="formatCoordinate(this)"/>
+              <input type="text" id="lon-input" placeholder="Longitude (Ex: -43.94)" style="flex:1" oninput="formatCoordinate(this)"/>
+            </div>
+            <div class="row" style="justify-content:space-between; margin-top:8px;">
               <button id="useGpsBtn" class="ghost" style="flex:1;background:#f6f9ff;color:var(--accent);border:none;margin-right:8px">Usar Minha Localização (GPS)</button>
               <div style="flex:1;max-width:150px;display:flex">
                 <span style="padding:10px 6px; background:#fff; border-radius:10px 0 0 10px; border:1px solid #eef3fb">Raio (m):</span>
@@ -214,6 +231,10 @@
             <div id="local-result-message" style="margin-top:8px;color:var(--muted);font-size:13px">Insira um local para iniciar a busca.</div>
           </div>
           <hr style="margin:12px 0;border:none;border-top:1px solid #f0f4f8" />
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <button id="print-geop-btn" style="background:#005029; color:white; flex:1">Imprimir Resultados (PDF/A4)</button>
+            <button id="clear-geop-btn" class="ghost" style="margin-left:8px;">Limpar GEOP</button>
+          </div>
           <div style="max-height:400px; overflow-y:auto" id="nearby-lines-list"><p style="padding:16px;color:#64748b">Carregue GTFS e insira o local de busca.</p></div>
         </div>
 
@@ -256,7 +277,7 @@
 
       <div style="margin-top:20px" class="footer-legend">
         <div style="background:var(--accent-2); color:var(--accent); font-weight:700; padding:6px 10px; border-radius:999px">Valor sugerido: R$ 6,40</div>
-        <div class="meta">Rotas integradas ao metrô serão sinalizadas.</div>
+        <div class="small">Rotas integradas ao metrô serão sinalizadas.</div>
       </div>
     </div>
 
@@ -286,16 +307,16 @@
   </footer>
 
   <div id="authBackdrop" class="auth-modal-backdrop" aria-hidden="true">
-    <div class="auth-modal" role="dialog" aria-modal="true">
-      <h3>Acesso Interno</h3>
-      <div class="small">Informe usuário e senha para acessar GEOP e Ferramentas.</div>
-      <input id="authUser" placeholder="Usuário" autocomplete="username" />
-      <input id="authPass" placeholder="Senha" type="password" autocomplete="current-password" />
-      <div id="authMsg" class="small" style="color:#ff5c5c; display:none"></div>
-      <div class="actions">
-        <button id="authCancel" class="btn-cancel">Cancelar</button>
-        <button id="authOk" class="btn-ok">Entrar</button>
+    <div class="auth-modal-content" style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.1);max-width:380px;width:90%">
+      <h3 style="margin-top:0;color:var(--accent)">Acesso Interno SIM</h3>
+      <div id="authMsg" style="color:#ff5c5c;margin-bottom:10px;font-size:13px;display:none"></div>
+      <input id="authUser" placeholder="Usuário (Ex: carloslima)" style="width:100%;margin-bottom:10px;text-transform:lowercase" />
+      <input id="authPass" type="password" placeholder="Senha" style="width:100%;margin-bottom:15px" />
+      <div style="display:flex;gap:10px">
+        <button id="authOk" style="flex:1">Entrar</button>
+        <button id="authCancel" class="ghost" style="flex:1">Cancelar</button>
       </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:15px;text-align:center">Acesso restrito para Staff/Admin.</div>
     </div>
   </div>
 
@@ -311,7 +332,6 @@
   (function(){
     try {
       const users = JSON.parse(localStorage.getItem('sim_users')||'{}');
-      // Adiciona o usuário Administrador padrão
       if(!users['carloslima']){
         users['carloslima'] = { password: 'delima14delima', role:'admin', name:'Carlos Lima' };
         localStorage.setItem('sim_users', JSON.stringify(users));
@@ -323,6 +343,7 @@
   const $ = id => document.getElementById(id);
   function show(el){ if(el) el.style.display=''; }
   function hide(el){ if(el) el.style.display='none'; }
+  function pad(n){ return n<10?'0'+n:n; }
 
   // Clock
   function updateClock(){ const now = new Date(); $('clock').textContent = now.toLocaleTimeString('pt-BR', {hour12:false}); }
@@ -333,43 +354,109 @@
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(map);
   let routeLayer = L.layerGroup().addTo(map);
   let allStopsCluster = L.markerClusterGroup({ maxClusterRadius:80, chunkedLoading:true }).addTo(map);
-  // AJUSTE 1/2: Variável de controle de traçado no escopo principal
-  let currentRoutePolyline = null;
-
+  let currentLocationMarker = null; 
+  let currentCircle = null; 
 
   // GTFS container
-  let GTFS = { files:{}, stops:[], routes:[], trips:[], stop_times:[], shapes:[], calendar:[], calendar_dates:[] , shapesById: {}, stopsById:{}, tripsById:{}, routesById:{}, stopTimesByStop:{} }; // Adicionado stopTimesByStop
+  let GTFS = { files:{}, stops:[], routes:[], trips:[], stop_times:[], shapes:[], calendar:[], calendar_dates:[] , shapesById: {}, stopsById:{}, tripsById:{}, routesById:{}, calendarMap:{} };
 
   // Utility functions
   function parseCSV(text){ return Papa.parse(text, { header:true, skipEmptyLines:true }).data; }
   function formatMinutes(mins){ if(mins==null) return '—'; if(mins<60) return mins+' min'; const h=Math.floor(mins/60), m=mins%60; return h+'h '+(m?m+'m':''); }
   function haversine(a,b){ const toRad=v=>v*Math.PI/180; const R=6371e3; const dlat=toRad(b.lat-a.lat), dlon=toRad(b.lon-a.lon), lat1=toRad(a.lat), lat2=toRad(b.lat); const sinlat=Math.sin(dlat/2), sinlon=Math.sin(dlon/2); const c=2*Math.atan2(Math.sqrt(sinlat*sinlat + Math.cos(lat1)*Math.cos(lat2)*sinlon*sinlon), Math.sqrt(1-(sinlat*sinlat + Math.cos(lat1)*Math.cos(lat2)*sinlon*sinlon))); return R*c; }
+  
+  function getCoordsFromStop(stop) {
+      if(!stop || !stop.stop_lat || !stop.stop_lon) return [0, 0];
+      return [parseFloat(stop.stop_lat), parseFloat(stop.stop_lon)];
+  }
 
   /************************************************************************
-   * AUTH (modal)
+   * NOVAS FUNÇÕES: Planejador A->B e Tempo
+   ************************************************************************/
+  function findClosestStop(targetLocation) {
+      if (!GTFS.stops || GTFS.stops.length === 0) return null;
+      let closest = null;
+      let minDistance = Infinity;
+
+      GTFS.stops.forEach(s => {
+          const stopLocation = { lat: parseFloat(s.stop_lat), lon: parseFloat(s.stop_lon) };
+          const distance = haversine(targetLocation, stopLocation);
+          if (distance < minDistance) {
+              minDistance = distance;
+              closest = { stop: s, distance: distance };
+          }
+      });
+      return closest;
+  }
+
+  function timeToSeconds(timeStr) {
+      if (!timeStr) return 0;
+      const parts = timeStr.split(':');
+      if (parts.length < 2) return 0;
+      let hours = parseInt(parts[0]);
+      const minutes = parseInt(parts[1]);
+      const seconds = parseInt(parts[2] || 0);
+      return hours * 3600 + minutes * 60 + seconds;
+  }
+
+  function secondsToTime(totalSeconds) {
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+
+  function getStopLocationByName(addressString){
+      const lowerAddress = addressString.toLowerCase().trim();
+      if(!GTFS.stops) return null;
+      const foundStop = GTFS.stops.find(s => s.stop_name && s.stop_name.toLowerCase() === lowerAddress) ||
+                        GTFS.stops.find(s => s.stop_name && s.stop_name.toLowerCase().includes(lowerAddress));
+      if(foundStop && foundStop.stop_lat && foundStop.stop_lon){
+          return {
+              lat: parseFloat(foundStop.stop_lat),
+              lon: parseFloat(foundStop.stop_lon),
+              name: foundStop.stop_name
+          };
+      }
+      return null;
+  }
+  
+  /************************************************************************
+   * AJUSTE GEOP: Formatação de Lat/Lon
+   ************************************************************************/
+  function formatCoordinate(input) {
+    let value = input.value.replace(/[^\d\.\-]/g, ''); 
+    if ((value.match(/\./g) || []).length > 1) {
+        value = value.substring(0, value.lastIndexOf('.'));
+    }
+    if(value.length > 1 && value.startsWith('-') && value.lastIndexOf('-') > 0) {
+        value = value.substring(0, value.lastIndexOf('-'));
+    }
+    if (value.length > 15) { 
+        value = value.substring(0, 15);
+    }
+    input.value = value;
+  }
+  window.formatCoordinate = formatCoordinate; 
+
+  /************************************************************************
+   * AUTH (modal) e CADASTRO DE FUNCIONÁRIOS (Admin Only)
    ************************************************************************/
   const authBackdrop = $('authBackdrop'), authUser = $('authUser'), authPass = $('authPass'), authOk = $('authOk'), authCancel = $('authCancel');
   const logoutBtn = $('sim-logout-btn');
 
   function showAuthMessage(msg){ const el=$('authMsg'); if(msg){ el.style.display='block'; el.textContent = msg; } else { el.style.display='none'; el.textContent=''; } }
-
   function openAuthModal(purpose){
-    showAuthMessage('');
-    authUser.value=''; authPass.value='';
+    showAuthMessage(''); authUser.value=''; authPass.value='';
     authBackdrop.style.display='flex'; authBackdrop.setAttribute('aria-hidden','false');
-    authBackdrop.dataset.purpose = purpose || '';
-    setTimeout(()=>authUser.focus(),50);
+    authBackdrop.dataset.purpose = purpose || ''; setTimeout(()=>authUser.focus(),50);
   }
   function closeAuthModal(){ authBackdrop.style.display='none'; authBackdrop.setAttribute('aria-hidden','true'); authBackdrop.dataset.purpose=''; }
-
   function setSession(role, username){
-    sessionStorage.setItem('sim_role', role);
-    sessionStorage.setItem('sim_user', username||'');
-    updateAuthUI();
+    sessionStorage.setItem('sim_role', role); sessionStorage.setItem('sim_user', username||''); updateAuthUI();
   }
   function clearSession(){
-    sessionStorage.removeItem('sim_role'); sessionStorage.removeItem('sim_user');
-    updateAuthUI();
+    sessionStorage.removeItem('sim_role'); sessionStorage.removeItem('sim_user'); updateAuthUI();
   }
 
   function updateAuthUI(){
@@ -377,72 +464,38 @@
     const user = sessionStorage.getItem('sim_user') || '';
     if(role==='staff' || role==='admin'){ $('sim-logout-btn').style.display='inline-block'; }
     else { $('sim-logout-btn').style.display='none'; }
-
-    let uel = document.getElementById('sim-user-info');
-    if(!uel){
-      uel = document.createElement('div'); uel.id='sim-user-info'; uel.style.fontSize='13px'; uel.style.color='var(--muted)'; uel.style.marginLeft='12px';
-      document.querySelector('header').appendChild(uel);
-    }
-    if(role==='public') uel.textContent='Visão Pública'; else uel.textContent = (user?user:'Funcionário') + ' — ' + (role==='admin'?'Administrador':'Interno');
-
-    // controls lock
-    const allowed = (role==='staff' || role==='admin');
-    
-    // NOVO: Atualiza a UI de cadastro
-    updateRegistrationUI();
+    updateRegistrationUI(); 
   }
 
-  // NOVO: CADASTRO DE FUNCIONÁRIOS (Admin Only)
   const registrationSection = $('employee-registration-section');
   const registerUserBtn = $('registerUserBtn');
   const regMsg = $('registration-message');
 
   function updateRegistrationUI(){
     const role = sessionStorage.getItem('sim_role') || 'public';
-    // Mostra a seção de cadastro APENAS para o Administrador
-    if(role === 'admin'){
-      show(registrationSection);
-    } else {
-      hide(registrationSection);
-    }
+    if(role === 'admin'){ show(registrationSection); } else { hide(registrationSection); }
   }
 
   registerUserBtn.addEventListener('click', function(){
-    // Normaliza o username: trim, lowercase, remove espaços e pontos para a chave
     const username = $('new-user-name').value.trim().toLowerCase().replace(/\s/g, '').replace(/\./g, ''); 
     const password = $('new-user-pass').value;
     const role = $('new-user-role').value;
-
     regMsg.textContent = '';
-    
     if(!username || !password){ regMsg.textContent = 'Preencha usuário e senha.'; regMsg.style.color='#ff5c5c'; return; }
-    
     try {
       const users = JSON.parse(localStorage.getItem('sim_users') || '{}');
       if(users[username]){ regMsg.textContent = `Usuário "${username}" já existe!`; regMsg.style.color='#ff5c5c'; return; }
-
-      // Adiciona o novo usuário
       users[username] = { password: password, role: role, name: username.toUpperCase().replace(/\./g, ' ') };
       localStorage.setItem('sim_users', JSON.stringify(users));
-      
       regMsg.textContent = `Usuário ${username} (${role}) cadastrado com sucesso!`;
-      regMsg.style.color='var(--accent-3)'; // Cor verde para sucesso
-      $('new-user-name').value = '';
-      $('new-user-pass').value = '';
-      
-      // Atualiza a UI para refletir a nova lista, caso necessário
+      regMsg.style.color='var(--accent-3)';
+      $('new-user-name').value = ''; $('new-user-pass').value = '';
       updateRegistrationUI(); 
-
-    } catch(e){
-      console.error('Registration error', e);
-      regMsg.textContent = 'Erro ao cadastrar usuário.';
-      regMsg.style.color='#ff5c5c';
-    }
+    } catch(e){ console.error('Registration error', e); regMsg.textContent = 'Erro ao cadastrar usuário.'; regMsg.style.color='#ff5c5c'; }
   });
-  // FIM NOVO CADASTRO
 
   authOk.addEventListener('click', function(){
-    const u = authUser.value.trim().toLowerCase().replace(/\s/g, '').replace(/\./g, ''); // Usa a chave normalizada
+    const u = authUser.value.trim().toLowerCase().replace(/\s/g, '').replace(/\./g, ''); 
     const p = authPass.value;
     if(!u || !p){ showAuthMessage('Informe usuário e senha.'); return; }
     try {
@@ -453,9 +506,7 @@
         setSession(role, u);
         closeAuthModal();
         const purpose = authBackdrop.dataset.purpose || '';
-        // Nota: O redirecionamento para admin.html foi removido, focando apenas no fluxo do index.html
         if(purpose){ const btn = document.querySelector('[data-tab="'+purpose+'"]'); if(btn) activateTabButton(btn); }
-        // Força a atualização da UI, incluindo o novo painel de registro
         updateRegistrationUI(); 
         return;
       } else { showAuthMessage('Usuário ou senha inválidos.'); }
@@ -463,31 +514,33 @@
   });
   authCancel.addEventListener('click', ()=>closeAuthModal());
   authBackdrop.addEventListener('click', e => { if(e.target===authBackdrop) closeAuthModal(); });
-
-  logoutBtn.addEventListener('click', function(){
-    if(!confirm('Deseja encerrar a sessão interna?')) return;
-    clearSession();
-    // reload to ensure protections applied
-    location.reload();
-  });
-
-  updateAuthUI();
+  logoutBtn.addEventListener('click', function(){ if(!confirm('Deseja encerrar a sessão interna?')) return; clearSession(); location.reload(); });
+  updateAuthUI(); 
 
   /************************************************************************
-   * AJUSTE 6: Limpeza na Troca de Abas
+   * Limpeza e troca de abas
    ************************************************************************/
-  function clearAllTabs(){
-    // Limpa Mapa e Sumário
+  function clearMapLayers(){
     routeLayer.clearLayers();
-    if (typeof currentRoutePolyline !== 'undefined') currentRoutePolyline = null; // Garante que a variável seja resetada
+    if(currentLocationMarker) currentLocationMarker.remove();
+    if(currentCircle) currentCircle.remove();
+    currentLocationMarker = null;
+    currentCircle = null;
+    map.setView([-19.919, -44.052], 12); 
+  }
+
+  function clearAllTabs(){ 
+    clearMapLayers();
     $('searchSummary').textContent = 'Nenhuma pesquisa realizada ainda.';
 
     // Limpa Plan tab
-    $('originInput').value = '';
-    $('destInput').value = '';
+    $('originInput').value = ''; $('destInput').value = '';
     $('routesBetween').innerHTML = 'Nenhuma pesquisa ainda.';
     $('bestOption').innerHTML = 'Busque rota para calcular.';
-    
+    currentItineraries = [];
+    currentOriginStop = null;
+    currentDestStop = null;
+
     // Limpa Search tab
     $('lineSearchSelect').value = '';
     $('scheduleContainer').innerHTML = 'Carregue GTFS para ver viagens.';
@@ -495,54 +548,106 @@
     $('itinerary').innerHTML = 'Selecione uma viagem para ver o itinerário.';
     hide($('selectedRouteSchedule'));
 
-    // Limpa Local tab
-    $('local-input').value = '';
+    // Limpa Local tab (GEOP)
+    $('local-input-address').value = '';
+    $('lat-input').value = '';
+    $('lon-input').value = '';
     $('local-result-message').textContent = 'Insira um local para iniciar a busca.';
     $('nearby-lines-list').innerHTML = '<p style="padding:16px;color:#64748b">Carregue GTFS e insira o local de busca.</p>';
+  }
+  
+  function activateTabButton(button){
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'ghost'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.add('ghost'));
+      button.classList.remove('ghost');
+      button.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => hide(content));
+      show($(`content-${button.dataset.tab}`));
+      
+      clearAllTabs(); 
+      
+      if(button.dataset.tab === 'search'){
+        updateDayTypeDisplay();
+      }
+  }
+
+
+  /************************************************************************
+   * GTFS Loading
+   ************************************************************************/
+  const gtfsRelativeFolder = './GTFS/';
+  const expectedFiles = ['stops.txt','routes.txt','trips.txt','stop_times.txt','shapes.txt','calendar.txt','calendar_dates.txt'];
+
+  function applyLoadedGTFS(loaded, sourceLabel){
+    ['stops','routes','trips','stop_times','shapes','calendar','calendar_dates','fare_attributes','frequencies'].forEach(k=>{
+      if(loaded[k]) GTFS[k] = loaded[k];
+    });
+
+    GTFS.stopsById = {};
+    if(GTFS.stops) GTFS.stops.forEach(s => GTFS.stopsById[s.stop_id]=s);
+
+    GTFS.tripsById = {};
+    if(GTFS.trips) GTFS.trips.forEach(t => GTFS.tripsById[t.trip_id]=t);
+
+    GTFS.routesById = {};
+    if(GTFS.routes) GTFS.routes.forEach(r => GTFS.routesById[r.route_id]=r);
+
+    GTFS.stopTimesByTrip = {};
+    if(GTFS.stop_times) GTFS.stop_times.forEach(st=>{
+      if(!GTFS.stopTimesByTrip[st.trip_id]) GTFS.stopTimesByTrip[st.trip_id]=[];
+      GTFS.stopTimesByTrip[st.trip_id].push(st);
+    });
+    for(const k in GTFS.stopTimesByTrip) GTFS.stopTimesByTrip[k].sort((a,b)=>parseInt(a.stop_sequence)-parseInt(b.stop_sequence));
+
+    GTFS.shapesById = {};
+    if(GTFS.shapes) GTFS.shapes.forEach(s => {
+      if(!GTFS.shapesById[s.shape_id]) GTFS.shapesById[s.shape_id]=[];
+      GTFS.shapesById[s.shape_id].push([parseFloat(s.shape_pt_lat), parseFloat(s.shape_pt_lon)]);
+    });
+    for(const k in GTFS.shapesById) GTFS.shapesById[k].sort((a,b)=>a.shape_pt_sequence-b.shape_pt_sequence);
+
+    // Index calendar/calendar_dates
+    GTFS.calendarMap = {};
+    if(GTFS.calendar) GTFS.calendar.forEach(c => {
+        const days = [];
+        if(c.sunday==1) days.push(0); if(c.monday==1) days.push(1); if(c.tuesday==1) days.push(2); if(c.wednesday==1) days.push(3);
+        if(c.thursday==1) days.push(4); if(c.friday==1) days.push(5); if(c.saturday==1) days.push(6);
+        GTFS.calendarMap[c.service_id] = { days: days, start: c.start_date, end: c.end_date };
+    });
+
+    // Populate UI
+    renderStopsOnMap();
+    populateLineSelects();
+    setupDateListeners();
+    $('gtfsStatus').textContent = `Dados carregados (${sourceLabel} - ${GTFS.stops.length} paradas)`;
+    $('totalStopsCount').textContent = `${GTFS.stops.length} paradas`;
     
-    // Atualiza datas
-    updateActiveDayDisplays(); 
-  }
+    // Popula a datalist de Autocomplete (GEOP/Planner)
+    const stopsList = $('stopsList');
+    stopsList.innerHTML = ''; 
+    GTFS.stops.forEach(stop => {
+      if(stop.stop_name) {
+        const option = document.createElement('option');
+        option.value = stop.stop_name;
+        stopsList.appendChild(option);
+      }
+    });
 
-
-  /************************************************************************
-   * TAB NAV
-   ************************************************************************/
-  const tabButtons = document.querySelectorAll('.tab-btn');
-  tabButtons.forEach(btn => btn.addEventListener('click', e=>{
-    const tab = btn.getAttribute('data-tab');
-    if(tab==='local' || tab==='tools'){
-      const role = sessionStorage.getItem('sim_role') || 'public';
-      if(!(role === 'staff' || role === 'admin')){ openAuthModal(tab); return; }
+    if ($('tabLocal').classList.contains('active')) {
+      const latInput = $('lat-input').value.trim();
+      const lonInput = $('lon-input').value.trim();
+      if (latInput && lonInput) {
+        $('searchLocalBtn').click();
+      }
     }
-    activateTabButton(btn);
-  }));
-
-  function activateTabButton(btn){
-    clearAllTabs(); // AJUSTE 6: Limpa antes de trocar
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = btn.getAttribute('data-tab');
-    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-    const showId = 'content-' + tab;
-    const showEl = document.getElementById(showId);
-    if(showEl) showEl.style.display = '';
   }
-  activateTabButton(document.querySelector('[data-tab="plan"]'));
 
-  /************************************************************************
-   * GTFS LOADING HYBRID (fetch relative path OR file input)
-   ************************************************************************/
-  const gtfsRelativeFolder = './GTFS/'; // relative path attempted when running via server
-  const expectedFiles = ['stops.txt','routes.txt','trips.txt','stop_times.txt','shapes.txt','calendar.txt','calendar_dates.txt','fare_attributes.txt','fare_rules.txt','frequencies.txt'];
-
-  // Try to fetch relative path (only works if served over http server)
   async function tryLoadGTFSFromRelative(){
     try {
-      // quick test fetch stops.txt
       const resp = await fetch(gtfsRelativeFolder + 'stops.txt', {cache:'no-cache'});
       if(!resp.ok) throw new Error('not found');
-      // load all present files
+      
       const loaded = {};
       for(const fn of expectedFiles){
         try {
@@ -557,755 +662,897 @@
       applyLoadedGTFS(loaded, 'relativo');
       return true;
     } catch(e){
-      // console.log('relative load failed', e);
+      // ERRO CRÍTICO: Se a primeira leitura falhar, exibe a mensagem de erro no status
+      console.error('Erro ao carregar GTFS. Verifique se a pasta ./GTFS/ existe e se está usando um servidor local (ex: http://localhost:8000).', e);
+      $('gtfsStatus').innerHTML = '🔴 Erro de Carga! (Faltando GTFS ou Servidor Local?)';
       return false;
     }
   }
 
-  // Apply GTFS into GTFS object and index
-  function applyLoadedGTFS(loaded, sourceLabel){
-    // Merge known keys
-    ['stops','routes','trips','stop_times','shapes','calendar','calendar_dates','fare_attributes','frequencies'].forEach(k=>{
-      if(loaded[k]) GTFS[k] = loaded[k];
+  /************************************************************************
+   * MAP & UI rendering
+   ************************************************************************/
+
+  function renderStopsOnMap(){
+    allStopsCluster.clearLayers();
+    if(!GTFS.stops || GTFS.stops.length === 0) return;
+
+    GTFS.stops.forEach(stop => {
+      const marker = L.marker([stop.stop_lat, stop.stop_lon]).bindPopup(`<b>${stop.stop_name}</b><br>${stop.stop_desc||''}<br>ID: ${stop.stop_id}`);
+      allStopsCluster.addLayer(marker);
     });
-
-    // index
-    GTFS.stopsById = {}; if(GTFS.stops) GTFS.stops.forEach(s => GTFS.stopsById[s.stop_id]=s);
-    GTFS.tripsById = {}; if(GTFS.trips) GTFS.trips.forEach(t => GTFS.tripsById[t.trip_id]=t);
-    GTFS.routesById = {}; if(GTFS.routes) GTFS.routes.forEach(r => GTFS.routesById[r.route_id]=r);
-    GTFS.stopTimesByTrip = {}; if(GTFS.stop_times) GTFS.stop_times.forEach(st=>{ if(!GTFS.stopTimesByTrip[st.trip_id]) GTFS.stopTimesByTrip[st.trip_id]=[]; GTFS.stopTimesByTrip[st.trip_id].push(st); });
-    for(const k in GTFS.stopTimesByTrip) GTFS.stopTimesByTrip[k].sort((a,b)=>parseInt(a.stop_sequence)-parseInt(b.stop_sequence));
-    // AJUSTE: Nova indexação para GEOP (Linhas Próximas)
-    GTFS.stopTimesByStop = {}; 
-    if(GTFS.stop_times) GTFS.stop_times.forEach(st=>{ 
-        if(!GTFS.stopTimesByStop[st.stop_id]) GTFS.stopTimesByStop[st.stop_id]=[]; 
-        GTFS.stopTimesByStop[st.stop_id].push(st); 
-    });
-    // shapes
-    GTFS.shapesById = {};
-    if(GTFS.shapes) GTFS.shapes.forEach(s => { if(!GTFS.shapesById[s.shape_id]) GTFS.shapesById[s.shape_id]=[]; GTFS.shapesById[s.shape_id].push({lat:parseFloat(s.shape_pt_lat), lon:parseFloat(s.shape_pt_lon), seq: parseInt(s.shape_pt_sequence)}); });
-    for(const k in GTFS.shapesById) GTFS.shapesById[k].sort((a,b)=>a.seq-b.seq);
-
-    // trip counts
-    GTFS.tripCounts = {};
-    if(GTFS.trips) GTFS.trips.forEach(trip => { GTFS.tripCounts[trip.route_id] = (GTFS.tripCounts[trip.route_id]||0)+1; });
-
-    // show totals
-    $('totalStopsCount').textContent = (GTFS.stops?GTFS.stops.length:0) + ' paradas';
-    $('gtfsStatus').textContent = 'GTFS carregado ('+sourceLabel+'). Paradas: ' + (GTFS.stops?GTFS.stops.length:0);
-
-    populateStopsDatalist();
-    populateRoutesSelect();
-
-    // add stops to cluster
-    if(GTFS.stops){
-      allStopsCluster.clearLayers();
-      GTFS.stops.forEach(s=>{
-        try {
-          const mk = L.marker([parseFloat(s.stop_lat), parseFloat(s.stop_lon)]).bindPopup(s.stop_name);
-          allStopsCluster.addLayer(mk);
-        } catch(e){}
-      });
-      if(!map.hasLayer(allStopsCluster)) map.addLayer(allStopsCluster);
-    }
+    map.fitBounds(allStopsCluster.getBounds());
   }
 
-  // Buttons
-  $('loadBtn').addEventListener('click', async ()=>{
-    // Recarregar GTFS (da pasta ./GTFS/)
-    $('gtfsStatus').textContent = 'Tentando recarregar GTFS da pasta ./GTFS/...';
-    const ok = await tryLoadGTFSFromRelative();
-    if(!ok) $('gtfsStatus').textContent = 'Falha ao carregar GTFS da pasta ./GTFS/. Verifique se o servidor está ativo e os arquivos estão presentes.';
-  });
-
-  // Attempt automatic load from relative server path on page load
-  window.addEventListener('load', async ()=>{
-    updateAuthUI();
-    activateTabButton(document.querySelector('[data-tab="plan"]'));
-
-    // 🚀 Carregamento automático garantido (forçado sem cache)
-    $('gtfsStatus').textContent = 'Carregando GTFS automaticamente...';
-    try {
-      const auto = await tryLoadGTFSFromRelative();
-      if (auto) {
-        $('gtfsStatus').textContent = 'GTFS carregado automaticamente com sucesso.';
-        console.log('GTFS carregado automaticamente da pasta ./GTFS/');
-      } else {
-        $('gtfsStatus').textContent = 'Falha ao carregar GTFS automaticamente. Verifique a pasta ./GTFS/';
-      }
-    } catch (e) {
-      $('gtfsStatus').textContent = 'Erro ao tentar carregar GTFS automaticamente.';
-      console.error('Erro no carregamento automático GTFS:', e);
-    }
-
-    // Detectar mudanças periódicas (mantido)
-    checkGtfsUpdates?.();
-
-    // Map click para preencher origem/destino
-    map.on('click', function(e){
-      if(!GTFS.stops) return;
-      let best=null, bestD=1e9;
-      GTFS.stops.forEach(s => { const d = haversine({lat:e.latlng.lat, lon:e.latlng.lng}, {lat:parseFloat(s.stop_lat), lon:parseFloat(s.stop_lon)}); if(d < bestD){ bestD = d; best = s; }});
-      if(best){
-        const val = `${best.stop_name} (${best.stop_id})`;
-        const originInput = $('originInput');
-        const destInput = $('destInput');
-
-        if(!originInput.value) originInput.value = val; 
-        else if(!destInput.value) destInput.value = val;
-        else originInput.value = val; // Se ambos estiverem preenchidos, preenche a origem novamente
-
-      }
+  function populateLineSelects(){
+    const select = $('lineSearchSelect');
+    select.innerHTML = '<option value="">Todas as Linhas</option>';
+    GTFS.routes.forEach(route => {
+      const option = document.createElement('option');
+      option.value = route.route_id;
+      option.textContent = `${route.route_short_name} - ${route.route_long_name}`;
+      select.appendChild(option);
     });
-
-    // Attach other UI events
-    $('searchBtn').addEventListener('click', handleSearchAToB);
-    $('clearBtn').addEventListener('click', clearPlanInputs); // AJUSTE 1: Botão Limpar
-
-    function clearPlanInputs(){
-      $('originInput').value='';
-      $('destInput').value='';
-      $('routesBetween').innerHTML='Nenhuma pesquisa ainda.';
-      $('bestOption').innerHTML='Busque rota para calcular.';
-      
-      routeLayer.clearLayers(); 
-      if (currentRoutePolyline) currentRoutePolyline.remove(); // Remove o traçado
-      currentRoutePolyline = null;
-      
-      $('searchSummary').textContent='Nenhuma pesquisa realizada ainda.';
-      hide($('selectedRouteSchedule')); // Esconde o painel de horários
-      $('selectedRouteScheduleContent').innerHTML = 'Nenhuma linha selecionada.';
-    }
-
-    $('resetMapBtn').addEventListener('click', resetMapView);
-    $('searchLocalBtn').addEventListener('click', searchNearbyLinesByInput);
-    $('useGpsBtn').addEventListener('click', getUserLocationAndSearch);
-    
-    // music
-    $('music-btn').addEventListener('click', ()=>{
-      const a = document.getElementById('musica-transcon'); if(a.paused){ a.play().catch(()=>{}); $('music-btn').classList.add('active'); } else { a.pause(); $('music-btn').classList.remove('active'); }
-    });
-
-    updateActiveDayDisplays(); // Inicializa datas e display de dia.
-
-    // Event listeners para a aba Linhas & Horários
-    const searchLineBtnEl = document.getElementById('searchLineBtn');
-    const clearScheduleBtnEl = document.getElementById('clearScheduleSearchBtn');
-
-    if(searchLineBtnEl){
-        searchLineBtnEl.addEventListener('click', () => {
-          const routeId = (document.getElementById('lineSearchSelect')||{}).value;
-          if(!GTFS.routes || GTFS.routes.length === 0){
-            alert('GTFS não carregado. Vá em Ferramentas e carregue os arquivos primeiro.');
-            return;
-          }
-          if(!routeId){
-            document.getElementById('scheduleContainer').innerHTML = '<p style="padding:10px;color:#64748b">Selecione uma linha.</p>';
-            document.getElementById('itinerary').innerHTML = 'Selecione uma viagem para ver o itinerário.';
-            return;
-          }
-          // Garante que o painel de horários ABAIXO do mapa esteja escondido ao mudar para a aba de busca
-          hide($('selectedRouteSchedule'));
-          renderScheduleForRoute(routeId);
-        });
-    }
-
-    if(clearScheduleBtnEl){
-        clearScheduleBtnEl.addEventListener('click', () => {
-          document.getElementById('lineSearchSelect').value = '';
-          document.getElementById('selectedLineName').textContent = '(Todas)';
-          document.getElementById('scheduleContainer').innerHTML = 'Carregue GTFS para ver viagens.';
-          document.getElementById('itinerary').innerHTML = 'Selecione uma viagem para ver o itinerário.';
-          updateActiveDayDisplays(); // Reinicia a exibição para a data atual
-          if(currentRoutePolyline){ routeLayer.removeLayer(currentRoutePolyline); currentRoutePolyline = null; }
-        });
-    }
-
-  });
-  </script>
-<script>
-/************************************************************************
- * Populate selects & datalists after GTFS load
- ************************************************************************/
-function populateStopsDatalist(){
-  const dl = $('stopsList');
-  if(!dl) return;
-  dl.innerHTML = '';
-  (GTFS.stops || []).forEach(s=>{
-    const opt = document.createElement('option');
-    opt.value = `${s.stop_name} (${s.stop_id})`;
-    dl.appendChild(opt);
-  });
-}
-function populateRoutesSelect(){
-  const sel = $('lineSearchSelect');
-  if(!sel) return;
-  sel.innerHTML = '<option value="">Todas as Linhas</option>';
-  (GTFS.routes || []).forEach(r=>{
-    const opt = document.createElement('option');
-    opt.value = r.route_id;
-    opt.textContent = `${r.route_short_name || ''} - ${r.route_long_name || ''}`;
-    sel.appendChild(opt);
-  });
-}
-
-/************************************************************************
- * Desenho de Rotas no Mapa (Funções extraídas do IIFE)
- ************************************************************************/
-function drawRoutePolylineByTrip(tripId){
-    if(!GTFS.tripsById[tripId]) return alert('Trip não encontrada.');
-    const trip = GTFS.tripsById[tripId];
-    if(trip.shape_id && GTFS.shapesById[trip.shape_id]){
-      const pts = GTFS.shapesById[trip.shape_id].map(p=>[p.lat,p.lon]);
-      if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
-      currentRoutePolyline = L.polyline(pts,{color:'#007BFF',weight:5}).addTo(routeLayer);
-      map.fitBounds(currentRoutePolyline.getBounds(),{padding:[40,40]});
-      return;
-    }
-    const st = GTFS.stopTimesByTrip[tripId];
-    if(st && st.length>1){
-      const pts = st.map(x=>{const s=GTFS.stopsById[x.stop_id];return [parseFloat(s.stop_lat),parseFloat(s.stop_lon)];});
-      if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
-      currentRoutePolyline = L.polyline(pts,{color:'#007BFF',weight:5}).addTo(routeLayer);
-      map.fitBounds(currentRoutePolyline.getBounds(),{padding:[40,40]});
-    }
-}
-
-function drawRoutePolylineByRoute(routeId){
-    routeLayer.clearLayers();
-    // Tenta encontrar uma trip com shape para representar a rota (prioriza a primeira)
-    const trip = (GTFS.trips||[]).find(t=>t.route_id===routeId && t.shape_id && GTFS.shapesById[t.shape_id]);
-    if(trip){
-      const pts = GTFS.shapesById[trip.shape_id].map(p=>[p.lat,p.lon]);
-      if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
-      currentRoutePolyline = L.polyline(pts,{color:'#005029',weight:5}).addTo(routeLayer);
-      map.fitBounds(currentRoutePolyline.getBounds(),{padding:[40,40]});
-      return;
-    }
-    alert('Traçado não disponível para esta linha.');
-}
-
-/************************************************************************
- * AJUSTE 3b: Listar Itinerário da Linha (stops/sequence)
- ************************************************************************/
-function renderItinerary(tripId) {
-  const trip = GTFS.tripsById[tripId];
-  const itineraryEl = $('itinerary');
-  if (!trip) {
-    itineraryEl.innerHTML = '<p style="color:#f59e0b">Viagem não encontrada para o itinerário.</p>';
-    return;
-  }
-
-  const st = (GTFS.stopTimesByTrip && GTFS.stopTimesByTrip[tripId]) || [];
-  if (st.length === 0) {
-    itineraryEl.innerHTML = '<p style="color:#64748b">Nenhum ponto de parada encontrado para esta viagem.</p>';
-    return;
-  }
-
-  let html = `<div style="margin-top:10px; padding:10px; border:1px solid #eef3fb; border-radius:8px; background:#f8fafc;">
-                <h4>Itinerário Completo (${trip.trip_headsign || 'Sentido'})</h4>
-                <ol style="list-style-type:decimal; padding-left:20px; max-height:200px; overflow-y:auto;">`;
-
-  st.forEach(stopTime => {
-    const s = GTFS.stopsById[stopTime.stop_id];
-    const time = stopTime.departure_time || stopTime.arrival_time || '--:--';
-    html += `<li style="margin-bottom:4px;">
-               <strong style="color:var(--accent-3);">${time.substring(0,5)}</strong> – ${s ? s.stop_name : 'Parada Desconhecida'} 
-             </li>`;
-  });
-
-  html += '</ol></div>';
-  itineraryEl.innerHTML = html;
-}
-
-/************************************************************************
- * AJUSTE 3: LINHAS & HORÁRIOS (cards + mapa)
- ************************************************************************/
-function attachScheduleButtons(container){
-  container.querySelectorAll('.trip-time').forEach(t=>{
-    // Clicks on the main card body (or a child element that isn't a button)
-    t.addEventListener('click', (e) => {
-      // Prevents activating the card when clicking a button inside it
-      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-
-      const tripId = t.dataset.tripId;
-      drawRoutePolylineByTrip(tripId);
-      renderItinerary(tripId); // AJUSTE 3b: Mostra itinerário
-      // Adiciona indicador visual de seleção
-      container.querySelectorAll('.trip-time').forEach(el=>el.classList.remove('selected'));
-      t.classList.add('selected');
-    });
-
-    const btnCenter = t.querySelector('.btn-center-stop');
-    if(btnCenter) {
-      btnCenter.addEventListener('click', ()=> {
-          const stop = GTFS.stopsById[btnCenter.dataset.stopId]; if(!stop) return; map.setView([parseFloat(stop.stop_lat), parseFloat(stop.stop_lon)], 16); L.popup().setLatLng([parseFloat(stop.stop_lat), parseFloat(stop.stop_lon)]).setContent(`<strong>${stop.stop_name}</strong>`).openOn(map);
-      });
-    }
-  });
-}
-
-function renderScheduleForRoute(routeId){
-    const route = GTFS.routesById ? GTFS.routesById[routeId] : null;
-    const scheduleContainerEl = document.getElementById('scheduleContainer');
-    const selectedLineNameEl = document.getElementById('selectedLineName');
-    const selPanelContent = document.getElementById('selectedRouteScheduleContent');
-
-
-    if(!route){
-      scheduleContainerEl.innerHTML = '<p style="padding:10px;color:#f59e0b">Linha não encontrada.</p>';
-      selPanelContent.innerHTML = '<p style="padding:10px;color:#f59e0b">Linha não encontrada.</p>';
-      return;
-    }
-
-    selectedLineNameEl.textContent = `${route.route_short_name || ''} - ${route.route_long_name || ''}`;
-    // Simula filtragem por dia da semana (a lógica GTFS completa é mais complexa, mas para o teste)
-    const trips = (GTFS.trips || []).filter(t => t.route_id === routeId); 
-    if(trips.length === 0){
-      scheduleContainerEl.innerHTML = '<p style="padding:10px;color:#64748b">Nenhuma viagem encontrada para esta linha.</p>';
-      selPanelContent.innerHTML = '<p style="padding:10px;color:#64748b">Nenhuma viagem encontrada para esta linha.</p>';
-      return;
-    }
-    
-    // Atualiza a exibição do tipo de dia para a linha/data selecionada
-    updateActiveDayDisplays();
-
-
-    const grouping = {};
-    for(const trip of trips){
-      const dir = ((''+trip.direction_id) || '0');
-      const head = trip.trip_headsign || ('Sentido ' + dir);
-      if(!grouping[dir]) grouping[dir] = {};
-      if(!grouping[dir][head]) grouping[dir][head] = [];
-      grouping[dir][head].push(trip);
-    }
-
-    let html = `<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-                  <button id="btnShowRouteOnMap" class="ghost">Ver Traçado da Linha no Mapa</button>
-                  <button id="btnClearRouteMap" class="ghost">Ocultar Traçado</button>
-                 </div>`;
-
-    for(const dir in grouping){
-      for(const head in grouping[dir]){
-        const tripsArray = grouping[dir][head];
-        const tripItems = tripsArray.map(trip=>{
-          const st = (GTFS.stopTimesByTrip && GTFS.stopTimesByTrip[trip.trip_id]) || [];
-          let dep=null;
-          for(const t of st){ if(t.departure_time){dep=t.departure_time;break;} if(t.arrival_time){dep=t.arrival_time;break;} }
-          return { trip, dep, firstStop: st[0]||null };
-        }).filter(it=>it.dep).sort((a,b)=>{
-          const toSec=hms=>{const p=hms.split(':').map(Number);return p[0]*3600+p[1]*60+(p[2]||0);}
-          return toSec(a.dep)-toSec(b.dep);
-        });
-
-        html += `<div style="margin-bottom:18px;padding:10px;border-radius:8px;background:#ffffff;border:1px solid #eef3fb">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                    <div><strong>${head}</strong><div class="meta" style="color:var(--muted);font-size:13px">Viagens: ${tripItems.length}</div></div>
-                    <div style="font-size:13px;color:var(--muted)">Sentido ID: ${dir}</div>
-                  </div>
-                  <div class="trip-grid">`;
-
-        tripItems.forEach(ti=>{
-          html += `<div class="trip-time" data-trip-id="${ti.trip.trip_id}" style="background:#f1f9f2;border:1px solid #e6f4ea;">
-                     <div style="font-weight:700;color:#0b6b3a">${ti.dep.substring(0,5)}</div>
-                     <div style="font-size:12px;color:#64748b;margin-top:4px; margin-bottom:6px">Clique para Itinerário/Mapa</div>
-                     <button class="ghost btn-center-stop" data-stop-id="${ti.firstStop?ti.firstStop.stop_id:''}" style="font-size:11px;padding:4px 6px;border-radius:6px;width:100%">Centro Parada Inicial</button>
-                   </div>`;
-        });
-        html += `</div></div>`;
-      }
-    }
-
-    scheduleContainerEl.innerHTML = html;
-    selPanelContent.innerHTML = html; // Espelho para o painel inferior
-
-    // AJUSTE 3b: Limpa o itinerário ao carregar nova linha
-    $('itinerary').innerHTML = 'Selecione uma viagem para ver o itinerário.';
-
-    // Adiciona event listeners (Aba Linhas & Horários)
-    const btnShowMapEl = scheduleContainerEl.querySelector('#btnShowRouteOnMap');
-    const btnClearMapEl = scheduleContainerEl.querySelector('#btnClearRouteMap');
-    if(btnShowMapEl) btnShowMapEl.addEventListener('click', ()=> drawRoutePolylineByRoute(routeId));
-    if(btnClearMapEl) btnClearMapEl.addEventListener('click', ()=>{ if(currentRoutePolyline){ routeLayer.removeLayer(currentRoutePolyline); currentRoutePolyline=null; }});
-    attachScheduleButtons(scheduleContainerEl);
-
-    // Adiciona event listeners (Painel Inferior - Plan)
-    const selPanelEl = document.getElementById('selectedRouteSchedule'); 
-    if(selPanelEl){
-      const btnShowMapElP = selPanelEl.querySelector('#btnShowRouteOnMap');
-      const btnClearMapElP = selPanelEl.querySelector('#btnClearRouteMap');
-      if(btnShowMapElP) btnShowMapElP.addEventListener('click', ()=> drawRoutePolylineByRoute(routeId));
-      if(btnClearMapElP) btnClearMapElP.addEventListener('click', ()=>{ if(currentRoutePolyline){ routeLayer.removeLayer(currentRoutePolyline); currentRoutePolyline=null; }});
-      attachScheduleButtons(selPanelEl);
-    }
-}
-
-
-/************************************************************************
- * Buscar Itinerário A→B (planejador simples)
- ************************************************************************/
-function handleSearchAToB(){
-  const orig = $('originInput').value.trim(), dest = $('destInput').value.trim();
-  if(!orig || !dest){ alert('Informe origem e destino.'); return; }
-  if(!GTFS.stops || GTFS.stops.length === 0){ alert('GTFS não carregado.'); return; }
-  const getStopId = v => {
-    const m = v.match(/\(([^)]+)\)$/);
-    return m ? m[1] : null;
-  };
-  const oId = getStopId(orig), dId = getStopId(dest);
-  if(!oId || !dId){ alert('Selecione origem/destino válidos da lista.'); return; }
-  const origin = GTFS.stopsById[oId], destStop = GTFS.stopsById[dId];
-  if(!origin || !destStop){ alert('Paradas inválidas.'); return; }
-
-  // encontrar todas as rotas que passam pela origem e destino
-  const tripsOrigin = [], tripsDest = [];
-  for(const tripId in GTFS.stopTimesByTrip){
-    const stops = GTFS.stopTimesByTrip[tripId].map(st => st.stop_id);
-    if(stops.includes(oId)) tripsOrigin.push(tripId);
-    if(stops.includes(dId)) tripsDest.push(tripId);
-  }
-  const intersectTrips = tripsOrigin.filter(x => tripsDest.includes(x));
-  const possibleRoutes = [...new Set(intersectTrips.map(t => GTFS.tripsById[t].route_id))];
-
-  let html = '';
-  if(possibleRoutes.length === 0){
-    html = '<p style="padding:10px;color:#f59e0b">Nenhuma linha direta liga essas paradas. Considere baldeação.</p>';
-    $('bestOption').innerHTML = 'Nenhuma rota direta encontrada. Considere baldeação.';
-  } else {
-    // AJUSTE 1c: Adiciona botão para Ver no Mapa + Horários
-    html = possibleRoutes.map(rid=>{
-      const r = GTFS.routesById[rid];
-      return `<div class="list-group-item"><div><span class="line-code">${r.route_short_name}</span>${r.route_long_name}</div><button class="ghost" onclick="handleViewRouteFromSearch('${r.route_id}')">Ver no Mapa</button></div>`;
-    }).join('');
-    $('bestOption').innerHTML = 'Linhas diretas listadas acima. Clique em **Ver no Mapa** para detalhes e horários.';
-  }
-
-  $('routesBetween').innerHTML = html || 'Nenhuma rota encontrada.';
-  
-  // Limpa o painel de horários e esconde ele se a busca for nova
-  hide($('selectedRouteSchedule'));
-  $('selectedRouteScheduleContent').innerHTML = 'Nenhuma linha selecionada.';
-  $('searchSummary').textContent = 'Resultados da busca A→B prontos.';
-}
-
-/************************************************************************
- * Nearby lines by location (GEOP)
- ************************************************************************/
-// MODIFICADO: Retorna a lista de paradas
-function findNearbyStops(coords, radius){
-  if(!GTFS.stops || GTFS.stops.length===0){ 
-    alert('GTFS não carregado.'); 
-    return []; 
   }
   
-  const results = [];
-  GTFS.stops.forEach(s=>{
-    const d = haversine(coords, {lat:parseFloat(s.stop_lat), lon:parseFloat(s.stop_lon)});
-    if(d <= radius) results.push({...s, distance:d});
-  });
-  results.sort((a,b)=>a.distance-b.distance);
+  /************************************************************************
+   * ROUTE & SCHEDULE (Drawings)
+   ************************************************************************/
+  let currentRoutePolyline = null;
+  let currentRouteStops = L.layerGroup();
   
-  // Apenas atualiza a mensagem aqui. A renderização será feita por findAndDisplayNearbyLines.
-  $('local-result-message').textContent = `${results.length} paradas encontradas em ${radius}m`;
-
-  return results; // Retorna a lista de paradas próximas
-}
-
-// NOVO: Encontra e exibe as linhas próximas
-function findAndDisplayNearbyLines(nearbyStops, radius) {
-    const listEl = $('nearby-lines-list');
-    listEl.innerHTML = '';
+  // AJUSTE: Traçado em VERMELHO para a aba Linhas & Horários
+  function drawRoutePolylineByRoute(routeId, colorHex='FF0000'){ // Default: RED para a aba Search
+    routeLayer.clearLayers(); 
     
-    if (nearbyStops.length === 0) {
-        listEl.innerHTML = '<p style="padding:16px;color:#64748b">Nenhuma parada ou linha próxima encontrada.</p>';
-        return;
+    const trip = GTFS.trips.find(t => t.route_id === routeId);
+    if(!trip || !trip.shape_id || !GTFS.shapesById[trip.shape_id]){
+      console.warn(`Não foi possível encontrar shape para a rota ${routeId}`);
+      routeLayer.removeLayer(currentRouteStops);
+      return;
     }
 
-    const nearbyRouteIds = new Set();
+    const shape = GTFS.shapesById[trip.shape_id];
     
-    // Usa a indexação GTFS.stopTimesByStop para maior eficiência
-    const stopTimesByStop = GTFS.stopTimesByStop || {};
-    const tripsById = GTFS.tripsById || {};
+    if(currentRoutePolyline) routeLayer.removeLayer(currentRoutePolyline);
+    
+    // Desenha o traçado com maior espessura e opacidade
+    currentRoutePolyline = L.polyline(shape, {
+        color: `#${colorHex.replace('#','')}`, 
+        weight: 7, 
+        opacity: 0.9 
+    }).addTo(routeLayer);
+    
+    // Adiciona os stops no mapa com marcadores mais visíveis
+    currentRouteStops.clearLayers();
+    const stopsForTrip = GTFS.stopTimesByTrip[trip.trip_id] || [];
+    stopsForTrip.forEach(st => {
+        const stop = GTFS.stopsById[st.stop_id];
+        if(stop){
+            L.circleMarker([stop.stop_lat, stop.stop_lon], {
+                radius: 6, 
+                color: 'white',
+                fillColor: `#${colorHex.replace('#','')}`,
+                fillOpacity: 1,
+                weight: 3 
+            }).addTo(routeLayer) 
+            .bindPopup(`<b>${stop.stop_name}</b><br>Horário: ${st.arrival_time ? st.arrival_time.substring(0,5) : '—'}`);
+        }
+    });
 
-    nearbyStops.forEach(stop => {
-        const stopTimesAtStop = stopTimesByStop[stop.stop_id] || [];
-        stopTimesAtStop.forEach(st => {
-            const trip = tripsById[st.trip_id];
-            if (trip) {
-                nearbyRouteIds.add(trip.route_id);
+    map.fitBounds(currentRoutePolyline.getBounds().pad(0.1));
+  }
+  
+  /************************************************************************
+   * AJUSTE GEOP: Funções
+   ************************************************************************/
+  
+  function findNearbyStops(lat, lon, radius) {
+    const target = { lat: lat, lon: lon };
+    const nearby = [];
+    if(!GTFS.stops) return nearby;
+
+    GTFS.stops.forEach(s => {
+        const stopLocation = { lat: parseFloat(s.stop_lat), lon: parseFloat(s.stop_lon) };
+        const distance = haversine(target, stopLocation);
+        if (distance <= radius) {
+            nearby.push({ stop: s, distance: distance });
+        }
+    });
+    return nearby.sort((a, b) => a.distance - b.distance);
+  }
+
+  function findNearbyLines(nearbyStops) {
+    const lineSet = new Map(); 
+    if(!GTFS.routes) return [];
+
+    nearbyStops.forEach(item => {
+        const tripsPassing = GTFS.stop_times.filter(st => st.stop_id === item.stop.stop_id).map(st => GTFS.tripsById[st.trip_id]).filter(t=>t);
+        
+        tripsPassing.forEach(trip => {
+            if(trip && GTFS.routesById[trip.route_id]) {
+                const route = GTFS.routesById[trip.route_id];
+                const routeId = route.route_id;
+
+                if (!lineSet.has(routeId) || item.distance < lineSet.get(routeId).minDistance) {
+                    lineSet.set(routeId, { route: route, minDistance: item.distance });
+                }
             }
         });
     });
-    
-    const routes = Array.from(nearbyRouteIds)
-        .map(id => GTFS.routesById[id])
-        .filter(r => r);
 
-    // 3. Renderiza a lista de rotas
-    if (routes.length === 0) {
-        listEl.innerHTML = '<p style="padding:16px;color:#64748b">Nenhuma linha encontrada atendendo estas paradas.</p>';
+    const lines = Array.from(lineSet.values());
+    lines.sort((a, b) => a.minDistance - b.minDistance);
+    return lines;
+  }
+
+  // Lógica de busca e prioridade ATUALIZADA para GEOP
+  $('searchLocalBtn').addEventListener('click', ()=>{
+    const latInputEl = $('lat-input');
+    const lonInputEl = $('lon-input');
+    const addressInput = $('local-input-address').value.trim();
+    const radius = parseFloat($('local-radius').value) || 500;
+    
+    let lat = null, lon = null;
+    let searchSource = '';
+    let errorMsg = '';
+
+    const latInput = latInputEl.value.trim();
+    const lonInput = lonInputEl.value.trim();
+
+    if (latInput && lonInput) {
+      const parsedLat = parseFloat(latInput);
+      const parsedLon = parseFloat(lonInput);
+      if (isNaN(parsedLat) || isNaN(parsedLon) || parsedLat < -90 || parsedLat > 90 || parsedLon < -180 || parsedLon > 180) {
+        errorMsg = 'Erro: Coordenadas Lat/Lon inválidas nos campos. Verifique o formato.';
+      } else {
+        lat = parsedLat;
+        lon = parsedLon;
+        searchSource = `Coordenadas (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+      }
+    }
+
+    if (lat === null && lon === null && addressInput) {
+      const locationFromStop = getStopLocationByName(addressInput);
+      
+      if (locationFromStop) {
+        lat = locationFromStop.lat;
+        lon = locationFromStop.lon;
+        searchSource = `Parada GTFS Encontrada: ${locationFromStop.name}`;
+        
+        latInputEl.value = lat.toFixed(6);
+        lonInputEl.value = lon.toFixed(6);
+        
+      } else {
+        errorMsg = 'Aviso: Não foi possível localizar uma Parada GTFS para o endereço informado. Tente ajustar o texto ou utilize as coordenadas.';
+      }
+    }
+    
+    // AJUSTE: Cor do marcador para GEOP
+    const customIcon = L.divIcon({ className: 'geop-location-marker' });
+
+    if (errorMsg) {
+      $('local-result-message').textContent = errorMsg;
+      $('nearby-lines-list').innerHTML = `<p style="padding:16px;color:#ff5c5c">${errorMsg}</p>`;
+      clearMapLayers();
+      return;
+    }
+    if (lat === null || lon === null) {
+      $('local-result-message').textContent = 'Erro: Insira um endereço válido ou as coordenadas (Lat/Lon).';
+      $('nearby-lines-list').innerHTML = `<p style="padding:16px;color:#ff5c5c">Erro: Insira um endereço válido ou as coordenadas.</p>`;
+      clearMapLayers();
+      return;
+    }
+
+    clearMapLayers();
+    const location = [lat, lon];
+    
+    currentLocationMarker = L.marker(location, { icon: customIcon }).addTo(routeLayer);
+    
+    currentCircle = L.circle(location, { 
+      radius: radius, 
+      color: '#1E90FF', 
+      fillColor: '#1E90FF', 
+      fillOpacity: 0.1, 
+      dashArray: '8, 8' 
+    }).addTo(routeLayer);
+    
+    map.fitBounds(currentCircle.getBounds().pad(0.2));
+
+    const nearbyStops = findNearbyStops(lat, lon, radius);
+    const nearbyLines = findNearbyLines(nearbyStops);
+
+    const listContainer = $('nearby-lines-list');
+    $('local-result-message').textContent = `Local: ${searchSource} - ${nearbyLines.length} linhas encontradas em ${nearbyStops.length} paradas no raio de ${radius}m.`;
+    
+    if(nearbyLines.length === 0){
+      listContainer.innerHTML = `<p style="padding:16px;color:#ff5c5c">Nenhuma linha encontrada no raio de ${radius} metros.</p>`;
+      return;
+    }
+    
+    listContainer.innerHTML = nearbyLines.map(line => {
+      const route = line.route;
+      // Passa a cor do GTFS, mas se não tiver, o drawRoutePolylineByRoute usará o vermelho padrão (para a aba SEARCH/GEOP).
+      const color = route.route_color || 'FF0000'; 
+      return `<div class="list-group-item" data-route-id="${route.route_id}" onclick="drawRoutePolylineByRoute('${route.route_id}', '${color}'); this.style.backgroundColor='var(--accent-2)'"> 
+        <div>
+          <span class="line-code" style="color:#${color}">${route.route_short_name}</span> ${route.route_long_name}
+        </div>
+        <div style="font-size:12px; color:var(--muted)">${line.minDistance.toFixed(0)}m (Parada mais próxima)</div>
+      </div>`;
+    }).join('');
+
+    nearbyStops.forEach(item => {
+      const s = item.stop;
+      L.marker([s.stop_lat, s.stop_lon], { opacity: 0.8 }).addTo(routeLayer)
+      .bindPopup(`<b>${s.stop_name}</b><br>${item.distance.toFixed(0)}m de distância`);
+    });
+  });
+
+  $('clear-geop-btn').addEventListener('click', clearAllTabs);
+  $('print-geop-btn').addEventListener('click', ()=>{ window.print(); });
+  
+  /************************************************************************
+   * RESTAURAÇÃO: Schedule/Search Logic
+   ************************************************************************/
+  function formatTime(timeStr) { 
+      if (!timeStr) return '—';
+      const parts = timeStr.split(':');
+      if (parts.length >= 2) return `${parts[0].padStart(2, '0')}:${parts[1]}`;
+      return timeStr;
+  }
+
+  function renderSchedule(routeId, dateStr) {
+    const scheduleContainer = $('scheduleContainer');
+    scheduleContainer.innerHTML = '';
+    hide($('selectedRouteSchedule'));
+
+    if (!GTFS.routesById[routeId]) {
+        scheduleContainer.innerHTML = 'Selecione uma linha e carregue o GTFS.';
         return;
     }
+
+    const dayInfo = determineDayType(dateStr);
+    const dayIndex = dayInfo.dayIndex;
+
+    const tripsForRoute = GTFS.trips.filter(t => t.route_id === routeId);
+    if (tripsForRoute.length === 0) {
+        scheduleContainer.innerHTML = 'Nenhuma viagem encontrada para esta linha.';
+        return;
+    }
+
+    const container = document.createElement('div');
+    container.className = 'trip-grid';
+    const uniqueTrips = new Set();
     
-    // Ordena por short name
-    routes.sort((a, b) => (a.route_short_name || '').localeCompare(b.route_short_name || ''));
-
-    let html = `<h4>Linhas Próximas (${routes.length})</h4>
-                <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Paradas encontradas: ${nearbyStops.length} em ${radius}m.</div>`;
-
-    routes.forEach(r => {
-        html += `<div class="list-group-item">
-                     <div>
-                         <span class="line-code">${r.route_short_name || '??'}</span>
-                         ${r.route_long_name || 'Nome Indisponível'}
-                     </div>
-                     <button class="ghost" onclick="handleViewRouteFromSearch('${r.route_id}')">Ver Horários</button>
-                 </div>`;
+    const tripsByHeadsign = {};
+    tripsForRoute.forEach(trip => {
+        const service = GTFS.calendarMap[trip.service_id];
+        if (service && service.days.includes(dayIndex)) {
+            const headsign = trip.trip_headsign || 'Viagem Sem Sentido';
+            if (!tripsByHeadsign[headsign]) {
+                tripsByHeadsign[headsign] = [];
+            }
+            const firstStopTime = GTFS.stopTimesByTrip[trip.trip_id] ? GTFS.stopTimesByTrip[trip.trip_id][0] : null;
+            if (firstStopTime) {
+                const startTime = firstStopTime.departure_time;
+                if (!uniqueTrips.has(startTime)) {
+                    uniqueTrips.add(startTime);
+                    tripsByHeadsign[headsign].push({ time: startTime, trip: trip });
+                }
+            }
+        }
     });
-    
-    // 4. Seção expansível para as paradas (opcional)
-    html += `<details style="margin-top:12px;border-top:1px solid #f0f4f8;padding-top:12px;">
-                <summary style="font-weight:600;color:var(--accent-3);cursor:pointer;">Ver ${nearbyStops.length} Paradas Encontradas</summary>
-                <div style="margin-top:8px;">`;
-                
-    nearbyStops.forEach(s => {
-        html += `<div class="list-group-item">
-                     <div>
-                         <strong>${s.stop_name}</strong>
-                         <div class="meta">${Math.round(s.distance)} m</div>
-                     </div>
-                     <button class="ghost" onclick="centerMapOnStop('${s.stop_id}')">Centro Mapa</button>
-                 </div>`;
-    });
-    
-    html += `</div></details>`;
-    
-    listEl.innerHTML = html;
-}
 
+    for (const headsign in tripsByHeadsign) {
+        const group = document.createElement('div');
+        group.style.gridColumn = '1 / -1';
+        group.innerHTML = `<h4 style="margin-top:10px; margin-bottom:5px; border-bottom:1px solid #f0f4f8; padding-bottom:5px;">Sentido: ${headsign}</h4>`;
+        container.appendChild(group);
 
-// MODIFICADO: Chama as funções atualizadas
-function searchNearbyLinesByInput(){
-  const inp = $('local-input').value.trim();
-  const rad = parseInt($('local-radius').value)||500;
-  if(!inp){ alert('Informe o local.'); return; }
-  let latlon = null;
-  const m = inp.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
-  if(m) latlon = {lat:parseFloat(m[1]), lon:parseFloat(m[2])};
-  if(!latlon){ alert('Informe coordenadas no formato "-19.9, -43.9"'); return; }
-  
-  const nearbyStops = findNearbyStops(latlon, rad); 
-  findAndDisplayNearbyLines(nearbyStops, rad); 
-}
+        tripsByHeadsign[headsign].sort((a, b) => a.time.localeCompare(b.time));
 
-// MODIFICADO: Chama as funções atualizadas
-function getUserLocationAndSearch(){
-  if(!navigator.geolocation){ alert('Navegador não suporta GPS.'); return; }
-  $('local-result-message').textContent = 'Obtendo localização...';
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-    const radius = parseInt($('local-radius').value)||500;
-    $('local-input').value = coords.lat.toFixed(5)+', '+coords.lon.toFixed(5);
-    
-    const nearbyStops = findNearbyStops(coords, radius);
-    findAndDisplayNearbyLines(nearbyStops, radius); 
-  }, err=>{ $('local-result-message').textContent = 'Erro ao obter localização: '+err.message; });
-}
-
-function centerMapOnStop(id){
-  const s = GTFS.stopsById[id];
-  if(!s) return;
-  map.setView([parseFloat(s.stop_lat), parseFloat(s.stop_lon)], 16);
-  L.popup().setLatLng([parseFloat(s.stop_lat), parseFloat(s.stop_lon)]).setContent(`<strong>${s.stop_name}</strong>`).openOn(map);
-}
-
-/************************************************************************
- * Reset map
- ************************************************************************/
-function resetMapView(){
-  map.setView([-19.919,-44.052],12);
-  routeLayer.clearLayers();
-  if (currentRoutePolyline) currentRoutePolyline.remove();
-  currentRoutePolyline=null;
-  allStopsCluster.clearLayers();
-  if(GTFS.stops){
-    GTFS.stops.forEach(s=>{
-      try{
-        const mk = L.marker([parseFloat(s.stop_lat), parseFloat(s.stop_lon)]).bindPopup(s.stop_name);
-        allStopsCluster.addLayer(mk);
-      }catch(e){}
-    });
-  }
-}
-</script>
-<script>
-/************************************************************************
- * Relatórios simples (aba Linhas & Horários)
- ************************************************************************/
-(function(){
-  const reports = [];
-  const btn = $('btnSendReport');
-  if(!btn) return;
-
-  btn.addEventListener('click', ()=>{
-    const type = $('reportTypeSelect').value;
-    const note = $('reportNote').value.trim();
-    const now = new Date().toLocaleString('pt-BR');
-    const lineSel = $('lineSearchSelect');
-    const lineName = lineSel.options[lineSel.selectedIndex].textContent;
-    reports.push({ type, note, when:now, line:lineName });
-    $('reportsPanel').innerHTML = reports.map(r=>`<div style="padding:6px 8px;border:1px solid #e6eef6;border-radius:6px;margin-bottom:4px;background:#f8fafc"><strong>${r.type}</strong> em ${r.when}<br><small>${r.line}</small><br>${r.note}</div>`).join('');
-    $('reportNote').value = '';
-  });
-})();
-
-/************************************************************************
- * Exportar horários CSV (extra)
- ************************************************************************/
-(function(){
-  const makeCSV = (rows)=>{
-    const esc = v => `"${(v||'').toString().replace(/"/g,'""')}"`;
-    return rows.map(r=>r.map(esc).join(',')).join('\n');
-  };
-
-  const addExportButton = ()=>{
-    const cont = document.getElementById('scheduleContainer');
-    if(!cont) return;
-    let btn = document.getElementById('btnExportSchedule');
-    if(btn) return;
-    btn = document.createElement('button');
-    btn.id = 'btnExportSchedule';
-    btn.textContent = 'Exportar horários CSV';
-    btn.className = 'ghost';
-    btn.style.marginBottom = '10px';
-    cont.parentNode.insertBefore(btn, cont);
-    btn.addEventListener('click', ()=>{
-      const lineId = (document.getElementById('lineSearchSelect')||{}).value;
-      if(!lineId){ alert('Selecione uma linha.'); return; }
-      const trips = (GTFS.trips||[]).filter(t=>t.route_id===lineId);
-      if(!trips.length){ alert('Nenhuma viagem para exportar.'); return; }
-      const rows = [['trip_id','stop_sequence','arrival_time','departure_time','stop_id','stop_name']];
-      trips.forEach(t=>{
-        const sts = GTFS.stopTimesByTrip[t.trip_id]||[];
-        sts.forEach(st=>{
-          const s = GTFS.stopsById[st.stop_id];
-          rows.push([t.trip_id, st.stop_sequence, st.arrival_time, st.departure_time, st.stop_id, s?s.stop_name:'']);
+        tripsByHeadsign[headsign].forEach(item => {
+            const timeEl = document.createElement('div');
+            timeEl.className = 'trip-time';
+            timeEl.dataset.tripId = item.trip.trip_id;
+            timeEl.innerHTML = `<span>${formatTime(item.time)}</span><span style="font-size:11px; font-weight:400; color:inherit;">Ver no Mapa</span>`;
+            timeEl.addEventListener('click', () => viewTripDetails(item.trip.trip_id));
+            container.appendChild(timeEl);
         });
-      });
-      const blob = new Blob([makeCSV(rows)], {type:'text/csv;charset=utf-8;'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `horarios_${lineId}.csv`;
-      a.click();
-    });
-  };
-  document.addEventListener('DOMContentLoaded', addExportButton);
-})();
+    }
 
-/************************************************************************
- * Finaliza inicialização
- ************************************************************************/
-window.addEventListener('load', ()=>{
-  console.log('Sistema SIM carregado com sucesso.');
-});
-</script>
-
-<script>
-/* ===== Extra helpers: view route from planner and date helpers (AJUSTE 1c, 5) ===== */
-function handleViewRouteFromSearch(routeId){
-  // draw on map
-  try { drawRoutePolylineByRoute(routeId); } catch(e){ console.warn('draw error', e); }
-  // reveal schedule both in the schedules tab and below the map
-  try { renderScheduleForRoute(routeId); } catch(e){ console.warn('render schedule error', e); }
-  // show a small summary
-  const route = GTFS.routesById && GTFS.routesById[routeId] ? (GTFS.routesById[routeId].route_short_name||'') + ' - ' + (GTFS.routesById[routeId].route_long_name||'') : routeId;
-  $('searchSummary').textContent = 'Linha selecionada: ' + route;
-  // ensure the selectedRouteSchedule panel is visible (below the map)
-  const sel = document.getElementById('selectedRouteSchedule'); if(sel) show(sel);
-}
-
-// Date helpers: auto-fill date inputs and show day-type label (AJUSTE 5)
-function determineDayType(isoDate){ // input 'YYYY-MM-DD'
-  const d = new Date(isoDate + 'T00:00:00'); 
-  const wd = d.getDay(); // 0 Sun .. 6 Sat
-  
-  // Verifica se o ano é válido
-  if (isNaN(d.getTime())) return 'Inválida';
-
-  // Verifica se há GTFS carregado para checar datas especiais (feriados, etc.)
-  if(GTFS.calendar_dates && GTFS.calendar_dates.length){
-    const ymd = isoDate.replace(/-/g,'');
-    for(const cd of GTFS.calendar_dates){
-      // Verifica se a data de calendário_dates corresponde
-      if(cd && (cd.date === ymd || cd.service_date === ymd)){ 
-          // 1: added (Dia Especial/Feriado), 2: removed.
-          if(cd.exception_type == 1) return 'Dia Especial (Feriado, etc.)'; 
-      }
+    if (container.children.length === 0) {
+        scheduleContainer.innerHTML = 'Nenhuma viagem agendada para este dia/linha.';
+    } else {
+        scheduleContainer.appendChild(container);
     }
   }
-  
-  if(wd>=1 && wd<=5) return 'Dia útil'; // Segunda a Sexta
-  if(wd===6) return 'Sábado';
-  return 'Domingo'; // Domingo
-}
 
-function updateActiveDayDisplays(){
-  const p = $('planDateInput'); 
-  const s = $('scheduleDateInput'); 
-  const ad = $('activeDayDisplay');
-  
-  const today = new Date(); 
-  const iso = today.toISOString().split('T')[0];
-  
-  // Define a data atual se não houver valor
-  if(p && !p.value) p.value = iso;
-  if(s && !s.value) s.value = iso;
+  function viewTripDetails(tripId) {
+      const trip = GTFS.tripsById[tripId];
+      const route = GTFS.routesById[trip.route_id];
+      const stopTimes = GTFS.stopTimesByTrip[tripId] || [];
+      
+      document.querySelectorAll('.trip-time').forEach(el => el.classList.remove('selected'));
+      document.querySelector(`[data-trip-id="${tripId}"]`).classList.add('selected');
+      show($('selectedRouteSchedule'));
 
-  // Atualiza a exibição na aba Horários
-  if(ad && s && s.value) ad.textContent = determineDayType(s.value);
-  
-  // Adiciona listeners (apenas uma vez para evitar duplicatas)
-  if(p && !p.hasChangeListener) { p.addEventListener('change', updateActiveDayDisplays); p.hasChangeListener = true; }
-  if(s && !s.hasChangeListener) { s.addEventListener('change', updateActiveDayDisplays); s.hasChangeListener = true; }
-}
+      // AJUSTE: Força a cor VERMELHA para a aba Linhas & Horários
+      const color = 'FF0000'; 
+      drawRoutePolylineByRoute(route.route_id, color);
+      
+      const itineraryHtml = `
+          <h4>Itinerário Detalhado - ${trip.trip_headsign || route.route_long_name}</h4>
+          <table style="width:100%; border-collapse:collapse; font-size:13px;">
+              <thead>
+                  <tr style="background:#f4f7fb;">
+                      <th style="padding:5px; text-align:left;">Ordem</th>
+                      <th style="padding:5px; text-align:left;">Parada</th>
+                      <th style="padding:5px; text-align:right;">Chegada</th>
+                      <th style="padding:5px; text-align:right;">Partida</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  ${stopTimes.map(st => {
+                      const stop = GTFS.stopsById[st.stop_id];
+                      return `
+                          <tr>
+                              <td style="padding:5px; border-bottom:1px solid #eef3fb;">${st.stop_sequence}</td>
+                              <td style="padding:5px; border-bottom:1px solid #eef3fb;">${stop ? stop.stop_name : st.stop_id}</td>
+                              <td style="padding:5px; border-bottom:1px solid #eef3fb; text-align:right;">${formatTime(st.arrival_time)}</td>
+                              <td style="padding:5px; border-bottom:1px solid #eef3fb; text-align:right;">${formatTime(st.departure_time)}</td>
+                          </tr>
+                      `;
+                  }).join('')}
+              </tbody>
+          </table>
+      `;
+      $('itinerary').innerHTML = itineraryHtml;
+      $('selectedRouteScheduleContent').innerHTML = itineraryHtml; 
+  }
 
-// Chamar no carregamento
-window.addEventListener('load', updateActiveDayDisplays);
-
-
-/* =====================================================
-   AUTO-RELOAD GTFS A CADA 2 MINUTOS (AJUSTE SE QUISER)
-   ===================================================== */
-let lastModifiedCache = {};
-
-async function checkGtfsUpdates() {
-  const files = ['stops.txt','routes.txt','trips.txt','stop_times.txt','shapes.txt'];
-  let changed = false;
-
-  for (const f of files) {
-    try {
-      // Nota: o fetch com HEAD só funciona se o servidor permitir. Se estiver rodando local sem servidor, pode falhar.
-      const resp = await fetch('./GTFS/' + f, { method: 'HEAD', cache: 'no-cache' });
-      const lm = resp.headers.get('last-modified');
-      if (!lastModifiedCache[f]) lastModifiedCache[f] = lm;
-      else if (lm && lastModifiedCache[f] !== lm) {
-        console.log('Arquivo alterado:', f);
-        changed = true;
-        lastModifiedCache[f] = lm;
+  $('searchLineBtn').addEventListener('click', () => {
+      const routeId = $('lineSearchSelect').value;
+      const dateStr = $('scheduleDateInput').value;
+      if (routeId && dateStr) {
+          renderSchedule(routeId, dateStr);
+          const route = GTFS.routesById[routeId];
+          $('selectedLineName').textContent = `${route.route_short_name} - ${route.route_long_name}`;
+          const firstTrip = GTFS.trips.find(t => t.route_id === routeId);
+          if (firstTrip) {
+            // AJUSTE: Força a cor VERMELHA para a aba Linhas & Horários
+            const color = 'FF0000';
+            drawRoutePolylineByRoute(routeId, color);
+          }
+      } else {
+          alert('Por favor, selecione uma linha e uma data.');
       }
-    } catch (e) { /* ignore error, probably no server */ }
+  });
+
+  $('clearScheduleSearchBtn').addEventListener('click', () => {
+    $('lineSearchSelect').value = '';
+    $('scheduleContainer').innerHTML = 'Carregue GTFS para ver viagens.';
+    $('selectedLineName').textContent = '(Todas)';
+    $('itinerary').innerHTML = 'Selecione uma viagem para ver o itinerário.';
+    hide($('selectedRouteSchedule'));
+    routeLayer.clearLayers();
+  });
+  
+  /************************************************************************
+   * AJUSTE PRINCIPAL: Planner Logic (A -> B)
+   ************************************************************************/
+  
+  let currentItineraries = []; // Variável global para armazenar os resultados da busca
+  let currentOriginStop = null; // Variável global para a parada de origem GTFS
+  let currentDestStop = null; // Variável global para a parada de destino GTFS
+
+  function findItineraries(originName, destName, dateStr) {
+      const timeNow = new Date();
+      // Start time in seconds (from midnight, potentially beyond 23:59:59 if we wrap)
+      const startTimeSeconds = timeNow.getHours() * 3600 + timeNow.getMinutes() * 60; 
+      const dayInfo = determineDayType(dateStr);
+      const dayIndex = dayInfo.dayIndex;
+      
+      const MAX_WAIT_TIME_MINS = 45; // Max 45 minutes of waiting at transfer stop
+
+      // Step 1: Find Stop Locations (Using basic GTFS stop name match for coordinates)
+      const originLoc = getStopLocationByName(originName);
+      const destLoc = getStopLocationByName(destName);
+      
+      if (!originLoc || !destLoc) return { closestOriginStop: null, closestDestStop: null, itineraries: [] };
+      
+      // Step 2: Find Closest GTFS Stops to the coordinates found (to estimate walk time)
+      const closestOriginStop = findClosestStop(originLoc);
+      const closestDestStop = findClosestStop(destLoc);
+
+      if (!closestOriginStop || !closestDestStop) return { closestOriginStop: null, closestDestStop: null, itineraries: [] };
+      
+      currentOriginStop = closestOriginStop;
+      currentDestStop = closestDestStop;
+
+      const originStop = closestOriginStop.stop;
+      const destStop = closestDestStop.stop;
+      
+      // Walk time calculation: Distance (m) / 1.1 m/s (walk speed) + 5 min buffer (seconds to minutes)
+      const walkTimeOrigin = Math.ceil(closestOriginStop.distance / 1.1 / 60) + 5; 
+      const walkTimeDest = Math.ceil(closestDestStop.distance / 1.1 / 60) + 5;
+      
+      let allItineraries = [];
+      
+      // Optimization: Filter stop times only for the current day
+      const stopTimesToday = GTFS.stop_times.filter(st => {
+          const trip = GTFS.tripsById[st.trip_id];
+          return trip && GTFS.calendarMap[trip.service_id] && GTFS.calendarMap[trip.service_id].days.includes(dayIndex);
+      });
+
+      // --------------------------------------------------------
+      // 1. BUSCA DIRETA (0 TRANSFER)
+      // --------------------------------------------------------
+      
+      const directTrips = GTFS.trips.filter(t => GTFS.routesById[t.route_id] && GTFS.calendarMap[t.service_id] && GTFS.calendarMap[t.service_id].days.includes(dayIndex));
+      
+      directTrips.forEach(trip => {
+          const stopTimes = GTFS.stopTimesByTrip[trip.trip_id];
+          if (!stopTimes) return;
+
+          const originST = stopTimes.find(st => st.stop_id === originStop.stop_id);
+          const destST = stopTimes.find(st => st.stop_id === destStop.stop_id);
+          
+          if (originST && destST && parseInt(originST.stop_sequence) < parseInt(destST.stop_sequence)) {
+              // Found a direct route!
+              const tripDepartureTimeSeconds = timeToSeconds(originST.departure_time);
+              
+              // Calculate when the user must arrive at the bus stop (tripDepartureTimeSeconds - walkTimeOrigin)
+              const requiredArrivalAtStopSeconds = tripDepartureTimeSeconds - (walkTimeOrigin * 60);
+
+              // Check if the trip is available now (i.e., user can get to stop before departure)
+              if (requiredArrivalAtStopSeconds >= startTimeSeconds) { 
+                  
+                  const arrivalTimeDestSeconds = timeToSeconds(destST.arrival_time);
+                  
+                  const busTime = (arrivalTimeDestSeconds - tripDepartureTimeSeconds) / 60; 
+                  
+                  // Total time from NOW (current time) to arrival at final destination (including final walk)
+                  const totalTime = (arrivalTimeDestSeconds - startTimeSeconds) / 60 + walkTimeDest;
+                  
+                  // Estimated Bus Stop Departure Time (HH:MM)
+                  const depTimeDisplay = secondsToTime(tripDepartureTimeSeconds);
+                  // Estimated Final Arrival Time (HH:MM)
+                  const arrivalTimeDisplay = secondsToTime(arrivalTimeDestSeconds + (walkTimeDest * 60));
+
+                  allItineraries.push({
+                      transfers: 0,
+                      totalTime: totalTime, 
+                      departureTime: depTimeDisplay,
+                      arrivalTime: arrivalTimeDisplay,
+                      segments: [{
+                          type: 'Walk to Origin', duration: formatMinutes(walkTimeOrigin), details: `🚶 Caminhe até ${originStop.stop_name}`
+                      }, {
+                          type: 'Bus', route: GTFS.routesById[trip.route_id], from: originStop, to: destStop, trip: trip, 
+                          departure: depTimeDisplay, arrival: secondsToTime(arrivalTimeDestSeconds), duration: formatMinutes(busTime)
+                      }, {
+                          type: 'Walk to Destination', duration: formatMinutes(walkTimeDest), details: `🚶 Caminhe de ${destStop.stop_name} ao destino final`
+                      }]
+                  });
+              }
+          }
+      });
+
+
+      // --------------------------------------------------------
+      // 2. BUSCA COM 1 BALDEAÇÃO (1 TRANSFER)
+      // --------------------------------------------------------
+
+      // 2a. Find all trips departing from the origin stop
+      const tripsFromOrigin = stopTimesToday.filter(st => st.stop_id === originStop.stop_id)
+          .map(st => ({ 
+              st: st, 
+              trip: GTFS.tripsById[st.trip_id] 
+          }));
+      
+      // 2b. Iterate over the first bus trips
+      tripsFromOrigin.forEach(item1 => {
+          const trip1 = item1.trip;
+          const st1_origin = item1.st;
+          const route1 = GTFS.routesById[trip1.route_id];
+          const trip1DepartureTimeSeconds = timeToSeconds(st1_origin.departure_time);
+
+          // Check if the user can catch this bus 1
+          if (trip1DepartureTimeSeconds - (walkTimeOrigin * 60) < startTimeSeconds) return;
+
+          const trip1StopTimes = GTFS.stopTimesByTrip[trip1.trip_id];
+          if (!trip1StopTimes) return;
+
+          // 2c. Iterate over all subsequent stops on the first trip (potential transfer stops)
+          trip1StopTimes.forEach(st1_transfer => {
+              if (parseInt(st1_transfer.stop_sequence) <= parseInt(st1_origin.stop_sequence)) return;
+              
+              const transferStop1 = GTFS.stopsById[st1_transfer.stop_id];
+              
+              // Bus 1 Arrival Time at Transfer Stop (seconds)
+              const arrivalTimeTransferSeconds = timeToSeconds(st1_transfer.arrival_time);
+
+              // 2d. Find trips departing from the transfer stop (Bus 2)
+              const tripsFromTransfer = stopTimesToday.filter(st => st.stop_id === transferStop1.stop_id)
+                  .map(st => ({ 
+                      st: st, 
+                      trip: GTFS.tripsById[st.trip_id] 
+                  }))
+                  .filter(item2 => item2.trip.route_id !== trip1.route_id); // Must be a different line
+              
+              tripsFromTransfer.forEach(item2 => {
+                  const trip2 = item2.trip;
+                  const st2_transfer = item2.st;
+                  const route2 = GTFS.routesById[trip2.route_id];
+
+                  // Bus 2 Departure Time from Transfer Stop (seconds)
+                  const departureTimeTransferSeconds = timeToSeconds(st2_transfer.departure_time);
+
+                  // Wait Time Calculation (seconds)
+                  let waitTimeSeconds = departureTimeTransferSeconds - arrivalTimeTransferSeconds;
+
+                  // Adjust for trips spanning midnight 
+                  if (waitTimeSeconds < 0) {
+                      waitTimeSeconds += 24 * 3600; 
+                  }
+                  const waitTimeMins = waitTimeSeconds / 60;
+                  
+                  if (waitTimeMins < 0 || waitTimeMins > MAX_WAIT_TIME_MINS) return; 
+
+                  const trip2StopTimes = GTFS.stopTimesByTrip[trip2.trip_id];
+                  if (!trip2StopTimes) return;
+
+                  const st2_dest = trip2StopTimes.find(st => st.stop_id === destStop.stop_id);
+                  
+                  if (st2_dest && parseInt(st2_transfer.stop_sequence) < parseInt(st2_dest.stop_sequence)) {
+                      // Found a 1-transfer route!
+                      
+                      const arrivalTimeDestSeconds = timeToSeconds(st2_dest.arrival_time);
+                      
+                      // Total time from NOW (current time) to arrival at final destination (including final walk)
+                      const totalTime = (arrivalTimeDestSeconds - startTimeSeconds) / 60 + walkTimeDest;
+                      
+                      const bus1Time = (arrivalTimeTransferSeconds - trip1DepartureTimeSeconds) / 60;
+                      const bus2Time = (arrivalTimeDestSeconds - departureTimeTransferSeconds) / 60;
+                      
+                      // Final Arrival Time (with walking)
+                      const arrivalTimeFinalSeconds = arrivalTimeDestSeconds + (walkTimeDest * 60);
+                      
+                      allItineraries.push({
+                          transfers: 1,
+                          totalTime: totalTime, 
+                          departureTime: secondsToTime(trip1DepartureTimeSeconds),
+                          arrivalTime: secondsToTime(arrivalTimeFinalSeconds),
+                          segments: [{
+                              type: 'Walk to Origin', duration: formatMinutes(walkTimeOrigin), details: `🚶 Caminhe até ${originStop.stop_name}`
+                          }, {
+                              type: 'Bus', route: route1, from: originStop, to: transferStop1, trip: trip1, 
+                              departure: secondsToTime(trip1DepartureTimeSeconds), 
+                              arrival: secondsToTime(arrivalTimeTransferSeconds), duration: formatMinutes(bus1Time)
+                          }, {
+                              type: 'Wait/Transfer', duration: formatMinutes(waitTimeMins), details: `⏳ Aguarde ${formatMinutes(waitTimeMins)} para o próximo ônibus em ${transferStop1.stop_name}`, stop: transferStop1
+                          }, {
+                              type: 'Bus', route: route2, from: transferStop1, to: destStop, trip: trip2, 
+                              departure: secondsToTime(departureTimeTransferSeconds), 
+                              arrival: secondsToTime(arrivalTimeDestSeconds), duration: formatMinutes(bus2Time)
+                          }, {
+                              type: 'Walk to Destination', duration: formatMinutes(walkTimeDest), details: `🚶 Caminhe de ${destStop.stop_name} ao destino final`
+                          }]
+                      });
+                  }
+              });
+          });
+      });
+
+      // Sort by total travel time (fastest first)
+      allItineraries.sort((a, b) => a.totalTime - b.totalTime);
+      currentItineraries = allItineraries; // Save for map drawing
+      
+      return { closestOriginStop: closestOriginStop, closestDestStop: closestDestStop, itineraries: allItineraries };
   }
 
-  if (changed) {
-    console.log('Alterações detectadas, recarregando GTFS...');
-    const ok = await tryLoadGTFSFromRelative();
-    if (ok) $('gtfsStatus').textContent = 'GTFS recarregado automaticamente (' + new Date().toLocaleTimeString('pt-BR') + ')';
-  }
-}
+  // AJUSTE: Função drawItinerary para cores e traçados distintos (Planejador)
+  function drawItinerary(index) {
+      const itineraries = currentItineraries;
+      if (index < 0 || index >= itineraries.length) return;
+      
+      const itinerary = itineraries[index];
+      routeLayer.clearLayers(); 
 
-// verifica a cada 2 minutos
-setInterval(checkGtfsUpdates, 120000);
-window.addEventListener('load', checkGtfsUpdates);
-</script>
+      // Visualmente destacar a opção selecionada na lista
+      document.querySelectorAll('.route-option').forEach(el => {
+          el.style.backgroundColor = '';
+          el.style.boxShadow = '';
+      });
+      const selectedElement = document.querySelector(`.route-option[data-index="${index}"]`);
+      if (selectedElement) {
+          selectedElement.style.backgroundColor = 'var(--accent-2)';
+          selectedElement.style.boxShadow = '0 0 10px rgba(0, 80, 41, 0.2)';
+      }
+
+      let bounds = [];
+      let busSegmentCount = 0;
+
+      // 1. Desenhar a pé de A para o 1º Ponto de Partida
+      const firstBusSegment = itinerary.segments.find(s => s.type === 'Bus');
+      if (currentOriginStop && firstBusSegment) {
+          const startCoord = getCoordsFromStop(currentOriginStop.stop);
+          const endCoord = getCoordsFromStop(firstBusSegment.from);
+          if (startCoord[0] !== endCoord[0] || startCoord[1] !== endCoord[1]) {
+              const line = L.polyline([startCoord, endCoord], {
+                  color: 'grey', 
+                  weight: 4, 
+                  opacity: 0.6, 
+                  dashArray: '10, 10' 
+              }).addTo(routeLayer);
+              bounds.push(line.getBounds());
+          }
+      }
+
+      // 2. Desenhar as rotas de ônibus
+      itinerary.segments.forEach(segment => {
+          if (segment.type === 'Bus') {
+              busSegmentCount++; 
+              const route = segment.route;
+              const trip = segment.trip;
+              
+              let color = 'FF0000'; // Default: RED para rotas diretas
+              let dashArray = null;
+
+              if (itinerary.transfers > 0) {
+                  // Cores distintas para baldeação
+                  color = (busSegmentCount === 1) ? '00AEEF' : '9900CC'; // Azul Claro / Roxo
+              } else {
+                  // Rota direta: usa a cor GTFS se houver, senão vermelho padrão
+                  color = route.route_color || 'FF0000'; 
+              }
+
+              const shape = GTFS.shapesById[trip.shape_id];
+              if(!shape) return;
+
+              // Desenhar o traçado: MAIS GROSSO E OPACO
+              const polyline = L.polyline(shape, {
+                  color: `#${color.replace('#','')}`, 
+                  weight: 8, 
+                  opacity: 1.0, 
+                  dashArray: dashArray 
+              }).addTo(routeLayer);
+              bounds.push(polyline.getBounds());
+              
+              // Marcar Paradas (Partida/Transfer/Chegada)
+              const stopsToMark = [segment.from, segment.to];
+              stopsToMark.forEach(stop => {
+                  const isTransfer = itinerary.transfers === 1 && segment.type === 'Bus' && (stop.stop_id === segment.to.stop_id); 
+                  
+                  const marker = L.circleMarker(getCoordsFromStop(stop), {
+                      radius: isTransfer ? 12 : 8, 
+                      color: 'white',
+                      fillColor: isTransfer ? '#FF8C00' : `#${color.replace('#','')}`, // Laranja Forte para Baldeação
+                      fillOpacity: 1,
+                      weight: isTransfer ? 4 : 3
+                  }).addTo(routeLayer)
+                  .bindPopup(`<b>${stop.stop_name}</b><br>${isTransfer ? 'PONTO DE BALDEAÇÃO' : (stop === segment.from ? 'Partida' : 'Chegada')}`);
+                  bounds.push(marker.getLatLng());
+              });
+          } else if (segment.type === 'Wait/Transfer' && itinerary.transfers > 0) {
+              // Se for Baldeação (Walk between bus 1 and bus 2) - Not necessary since the current logic assumes stop-to-stop transfer.
+              // If the user needs to walk to a *different* stop for transfer, we would draw a line between segment.stop and segment.stop.
+          }
+      });
+      
+      // 3. Desenhar a pé do Último Ponto de Chegada para B (Destino)
+      const lastBusSegment = itinerary.segments.filter(s => s.type === 'Bus').pop();
+      if (currentDestStop && lastBusSegment) {
+          const startCoord = getCoordsFromStop(lastBusSegment.to);
+          const endCoord = getCoordsFromStop(currentDestStop.stop);
+          if (startCoord[0] !== endCoord[0] || startCoord[1] !== endCoord[1]) {
+              const line = L.polyline([startCoord, endCoord], {
+                  color: 'grey', 
+                  weight: 4, 
+                  opacity: 0.6, 
+                  dashArray: '10, 10' 
+              }).addTo(routeLayer);
+              bounds.push(line.getBounds());
+          }
+      }
+
+      // 4. Desenhar marcadores A e B por último para garantir visibilidade
+      if (currentOriginStop && currentDestStop) {
+        L.marker(getCoordsFromStop(currentOriginStop.stop), { 
+            icon: L.divIcon({className: 'geop-location-marker', html: 'A', style: 'color: #00A300; border-color: #00A300;'}) // VERDE
+        }).addTo(routeLayer)
+        .bindPopup(`<b>ORIGEM: ${currentOriginStop.stop.stop_name}</b>`);
+        
+        L.marker(getCoordsFromStop(currentDestStop.stop), { 
+            icon: L.divIcon({className: 'geop-location-marker', html: 'B', style: 'color: red; border-color: red;'}) // VERMELHO
+        }).addTo(routeLayer)
+        .bindPopup(`<b>DESTINO: ${currentDestStop.stop.stop_name}</b>`);
+      }
+
+
+      // Ajustar o mapa para exibir todas as rotas e marcadores
+      if (bounds.length > 0) {
+          map.fitBounds(L.latLngBounds(bounds).pad(0.1));
+      }
+      
+      // Atualizar Melhor Opção
+      const bestOption = $('bestOption');
+      const routeSummary = itinerary.segments.filter(s => s.type === 'Bus').map(s => `🚌 ${s.route.route_short_name}`).join(' → ');
+      
+      bestOption.innerHTML = `
+          <div style="font-size:18px; font-weight:700; color:var(--accent-3);">${secondsToTime(timeToSeconds(itinerary.departureTime))} → ${secondsToTime(timeToSeconds(itinerary.arrivalTime))}</div>
+          <div class="details" style="font-size:15px; font-weight:600; margin-top:4px;">Linhas: ${routeSummary} | Tempo Total: ${formatMinutes(itinerary.totalTime)}</div>
+          <div class="details" style="margin-top:4px;">Tipo: ${itinerary.transfers === 0 ? 'Rota Direta (1 Ônibus)' : 'Com 1 Baldeação (2 Ônibus) *Cores diferentes no Mapa'}</div>
+          <button onclick="drawItinerary(${index})" style="margin-top:8px; width:100%">Recarregar Mapa/Itinerário</button>
+      `;
+  }
+
+
+  function renderItineraries(searchResult) {
+      const { closestOriginStop, closestDestStop, itineraries } = searchResult;
+      const routesBetween = $('routesBetween');
+      const bestOption = $('bestOption');
+      
+      routeLayer.clearLayers(); 
+
+      if (!closestOriginStop || !closestDestStop) {
+          routesBetween.innerHTML = '<p style="color:#ff5c5c; font-weight:600;">Não foi possível encontrar uma parada GTFS próxima à origem ou destino com o texto informado.</p>';
+          bestOption.innerHTML = 'Nenhuma rota encontrada.';
+          return;
+      }
+
+      // Salva os stops globais para uso no drawItinerary
+      // Já feito dentro de findItineraries, mas repetido para clareza:
+      currentOriginStop = closestOriginStop;
+      currentDestStop = closestDestStop;
+      
+      const originStop = closestOriginStop.stop;
+      const destStop = closestDestStop.stop;
+
+      // Display Origin/Destination Info
+      let infoHtml = `
+          <div style="font-size:13px; color:var(--muted); margin-bottom:12px; padding:8px; background:#f8fafc; border-radius:8px;">
+              **Parada de Embarque (Aprox.):** ${originStop.stop_name} (${closestOriginStop.distance.toFixed(0)}m a pé)<br>
+              **Parada de Desembarque (Aprox.):** ${destStop.stop_name} (${closestDestStop.distance.toFixed(0)}m a pé)
+          </div>
+      `;
+      routesBetween.innerHTML = infoHtml;
+
+      // Define os limites do mapa para A e B antes de desenhar a rota
+      map.fitBounds(L.latLngBounds([originStop.stop_lat, originStop.stop_lon], [destStop.stop_lat, destStop.stop_lon]).pad(0.3));
+      
+      if (itineraries.length === 0) {
+          routesBetween.innerHTML += '<p>Nenhuma rota (direta ou com 1 baldeação) encontrada a partir de agora. Tente um horário posterior.</p>';
+          bestOption.innerHTML = 'Nenhuma rota encontrada.';
+          return;
+      }
+
+      const best = itineraries[0];
+      
+      // Render Best Option Panel
+      bestOption.innerHTML = `
+          <div style="font-size:18px; font-weight:700; color:var(--accent-3);">${secondsToTime(timeToSeconds(best.departureTime))} → ${secondsToTime(timeToSeconds(best.arrivalTime))}</div>
+          <div class="details" style="font-size:15px; font-weight:600; margin-top:4px;">Tempo Total: ${formatMinutes(best.totalTime)}</div>
+          <div class="details" style="margin-top:4px;">Tipo: ${best.transfers === 0 ? 'Rota Direta (1 Ônibus)' : 'Com 1 Baldeação (2 Ônibus)'}</div>
+          <button onclick="drawItinerary(0)" style="margin-top:8px; width:100%">Ver no Mapa</button>
+      `;
+
+      // Render List of Options
+      routesBetween.innerHTML += itineraries.map((item, index) => {
+          const routeSummary = item.segments.filter(s => s.type === 'Bus').map(s => `🚌 ${s.route.route_short_name}`).join(' ');
+          const firstBusSegment = item.segments.find(s => s.type === 'Bus');
+          const color = firstBusSegment ? firstBusSegment.route.route_color || 'FF0000' : 'FF0000'; // Cor da Linha 1 para destaque
+          const routeType = item.transfers === 0 ? 'Direta (1 Ônibus)' : 'Baldeação (2 Ônibus)';
+          
+          return `
+              <div class="route-option" onclick="drawItinerary(${index})" data-index="${index}" style="border-left: 4px solid #${color}; padding-left:10px;">
+                  <strong style="color:#${color}">Linhas: ${routeSummary}</strong>
+                  <div style="margin-top:4px; font-size:14px;">
+                      <span style="font-weight:700; color:var(--accent);">${secondsToTime(timeToSeconds(item.departureTime))} → ${secondsToTime(timeToSeconds(item.arrivalTime))}</span>
+                      • ${formatMinutes(item.totalTime)} Total
+                  </div>
+                  <div class="details">${routeType}</div>
+                  <div class="details" style="margin-top:8px;">
+                      ${item.segments.map(s => {
+                          let info = s.details;
+                          if(s.type === 'Bus') info = `🚌 Linha ${s.route.route_short_name} (${s.departure}) → ${s.arrival}`;
+                          
+                          return `<div style="margin-left: -2px; font-size:12px;">${info} (${s.duration})</div>`;
+                      }).join('')}
+                  </div>
+              </div>
+          `;
+      }).join('');
+      
+      // Draw the best route by default
+      drawItinerary(0);
+  }
+  
+  $('searchBtn').addEventListener('click', () => {
+      const originName = $('originInput').value.trim();
+      const destName = $('destInput').value.trim();
+      const dateStr = $('planDateInput').value;
+
+      if (!originName || !destName || !dateStr) {
+          alert('Por favor, preencha a Origem, o Destino e a Data da Viagem.');
+          return;
+      }
+
+      $('routesBetween').innerHTML = '<p style="padding:16px; text-align:center;">Buscando as melhores opções...</p>';
+      $('bestOption').innerHTML = 'Calculando...';
+      routeLayer.clearLayers();
+      
+      const searchResult = findItineraries(originName, destName, dateStr);
+      renderItineraries(searchResult);
+
+      $('searchSummary').textContent = `Trajeto A→B: ${searchResult.itineraries.length} rotas encontradas.`;
+  });
+
+  $('clearBtn').addEventListener('click', () => {
+      clearAllTabs();
+      routeLayer.clearLayers();
+  });
+  
+  /************************************************************************
+   * Funções de Data
+   ************************************************************************/
+  function determineDayType(dateStr) {
+      const date = new Date(dateStr + 'T00:00:00'); 
+      const day = date.getDay(); 
+      let dayType = 'Dia Útil';
+      let dayIndex = day;
+      
+      if (day === 0) { 
+          dayType = 'Domingo';
+          dayIndex = 0;
+      } else if (day === 6) { 
+          dayType = 'Sábado';
+          dayIndex = 6;
+      }
+      return { type: dayType, dayIndex: dayIndex };
+  }
+  
+  function updateDayTypeDisplay(){
+      const scheduleDateInput = $('scheduleDateInput');
+      const activeDayDisplay = $('activeDayDisplay');
+      if(scheduleDateInput && activeDayDisplay && scheduleDateInput.value){
+          const dayInfo = determineDayType(scheduleDateInput.value);
+          activeDayDisplay.textContent = dayInfo.type;
+      }
+  }
+
+  function setupDateListeners(){
+      const today = new Date().toISOString().substring(0, 10);
+      $('scheduleDateInput').value = today;
+      $('scheduleDateInput').addEventListener('change', updateDayTypeDisplay);
+      $('planDateInput').value = today;
+      updateDayTypeDisplay();
+  }
+  
+  /************************************************************************
+   * INIT
+   ************************************************************************/
+  document.addEventListener('DOMContentLoaded', tryLoadGTFSFromRelative);
+  $('loadBtn').addEventListener('click', tryLoadGTFSFromRelative);
+  
+  document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const tab = this.dataset.tab;
+      if(tab === 'tools' && sessionStorage.getItem('sim_role') !== 'admin'){
+        openAuthModal('tools'); return;
+      }
+      activateTabButton(this);
+    });
+  });
+
+  // Listener para o botão de atalho da tab Plan para a tab Search
+  $('goToScheduleBtn').addEventListener('click', () => {
+      const searchTabButton = $('tabSearch');
+      if (searchTabButton) {
+          activateTabButton(searchTabButton);
+      }
+  });
+  </script>
 </body>
 </html>
